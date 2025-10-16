@@ -10,6 +10,9 @@ vim.opt.number = true
 -- Enter insert mode
 vim.keymap.set("n", "e", "i", { noremap = true, silent = true })
 
+-- Block select
+vim.keymap.set("n", "<C-b>", "<C-v>", { noremap = true, silent = true })
+
 -- Undo/redo
 vim.keymap.set({ "n", "i" }, "<C-z>", function() vim.cmd("undo") end, { noremap = true, silent = true })
 vim.keymap.set({ "n", "i" }, "<C-y>", function() vim.cmd("redo") end, { noremap = true, silent = true })
