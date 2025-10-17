@@ -9,15 +9,15 @@ vim.opt.number = true
 
 -- Deleting
 vim.keymap.set({ "n", "v" }, "<S-d>", "<Nop>", { noremap = true, silent = true })
-vim.keymap.set({ "n", "v" }, "d", "<Nop>", { noremap = true, silent = true })
 vim.keymap.set({ "n", "v" }, "<Del>", "d", { noremap = true, silent = true })
-vim.keymap.set({ "n", "v" }, "<S-Del>", "<S-d>", { noremap = true, silent = true })
-vim.keymap.set({ "n", "v" }, "<C-Del>", "<C-d>", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "<S-Del>", "dd", { noremap = true, silent = true })
 
 -- Enter insert mode
+vim.keymap.set("n", "<S-a>", "<Nop>", { noremap = true, silent = true })
 vim.keymap.set("n", "i", "<Nop>", { noremap = true, silent = true })
 vim.keymap.set("n", "e", "i", { noremap = true, silent = true })
 vim.keymap.set("n", "<S-e>", "a", { noremap = true, silent = true })
+vim.keymap.set("n", "<C-e>", "<S-a>", { noremap = true, silent = true })
 
 -- Block select
 vim.keymap.set("n", "<S-v>", "Nop")
@@ -71,10 +71,10 @@ end, { noremap = true, silent = true })
 
 -- Moving
 
-vim.keymap.set({ "n" }, "w", "k", { noremap = true, silent = true })
-vim.keymap.set({ "n" }, "s", "j", { noremap = true, silent = true })
-vim.keymap.set({ "n" }, "a", "h", { noremap = true, silent = true })
-vim.keymap.set({ "n" }, "d", "l", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "w", "k", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "s", "j", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "a", "h", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "d", "l", { noremap = true, silent = true })
 
 local move10 = {
     ["<S-Up>"] = "10k",
