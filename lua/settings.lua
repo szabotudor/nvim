@@ -124,7 +124,6 @@ end, { noremap = true, silent = true })
 
 
 -- Git
-vim.keymap.set("n", "<C-g>", function ()
-    vim.cmd("LazyGit")
-end, { noremap = true, silent = true })
+vim.keymap.set("n", "gg", function () vim.cmd("LazyGit") end, { noremap = true, silent = true })
+vim.keymap.set("n", "g", function () vim.cmd("LazyGit") end, { noremap = true, silent = true })
 
