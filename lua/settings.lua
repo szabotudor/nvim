@@ -136,3 +136,16 @@ end, { noremap = true, silent = true })
 vim.keymap.set("n", "gg", function () vim.cmd("LazyGit") end, { noremap = true, silent = true })
 vim.keymap.set("n", "g", function () vim.cmd("LazyGit") end, { noremap = true, silent = true })
 
+
+-- File Browser
+
+vim.api.nvim_create_autocmd("FileType", {
+pattern = "NvimTree",
+    callback = function()
+        vim.keymap.set("n", "a", "<Nop>", { noremap = true, silent = true })
+        vim.keymap.set("n", "n", function()
+            require("nvim-tree.api").fs.create()
+        end, { buffer = true, desc = "Create new file in NvimTree" })
+    end,
+})
+
