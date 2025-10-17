@@ -7,10 +7,23 @@ vim.opt.number = true
 
 -- KEYMAP
 
+-- Deleting
+vim.keymap.set({ "n", "v" }, "<S-d>", "<Nop>", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "d", "<Nop>", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "<Del>", "d", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "<S-Del>", "<S-d>", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "<C-Del>", "<C-d>", { noremap = true, silent = true })
+
 -- Enter insert mode
+vim.keymap.set("n", "i", "<Nop>", { noremap = true, silent = true })
 vim.keymap.set("n", "e", "i", { noremap = true, silent = true })
+vim.keymap.set("n", "<S-e>", "a", { noremap = true, silent = true })
 
 -- Block select
+vim.keymap.set("n", "<S-v>", "Nop")
+vim.keymap.set("n", "v", "Nop")
+vim.keymap.set("n", "b", "v", { noremap = true, silent = true })
+vim.keymap.set("n", "<S-b>", "<S-v>", { noremap = true, silent = true })
 vim.keymap.set("n", "<C-b>", "<C-v>", { noremap = true, silent = true })
 
 -- Undo/redo
@@ -58,10 +71,10 @@ end, { noremap = true, silent = true })
 
 -- Moving
 
-vim.keymap.set({ "n", "v" }, "w", "k", { noremap = true, silent = true })
-vim.keymap.set({ "n", "v" }, "s", "j", { noremap = true, silent = true })
-vim.keymap.set({ "n", "v" }, "a", "h", { noremap = true, silent = true })
-vim.keymap.set({ "n", "v" }, "d", "l", { noremap = true, silent = true })
+vim.keymap.set({ "n" }, "w", "k", { noremap = true, silent = true })
+vim.keymap.set({ "n" }, "s", "j", { noremap = true, silent = true })
+vim.keymap.set({ "n" }, "a", "h", { noremap = true, silent = true })
+vim.keymap.set({ "n" }, "d", "l", { noremap = true, silent = true })
 
 local move10 = {
     ["<S-Up>"] = "10k",
@@ -71,9 +84,9 @@ local move10 = {
 }
 
 for key, cmd in pairs(move10) do
-    vim.keymap.set("n", key, cmd, { noremap = true, silent = true })
+    vim.keymap.set({ "n", "v" }, key, cmd, { noremap = true, silent = true })
 
-    vim.keymap.set("i", key, "<C-o>" .. cmd, { noremap = true, silent = true })
+    vim.keymap.set({ "i" }, key, "<C-o>" .. cmd, { noremap = true, silent = true })
 end
 
 
@@ -107,5 +120,11 @@ vim.keymap.set("n", "<C-w>a", function ()
 end, { noremap = true, silent = true })
 vim.keymap.set("n", "<C-w>d", function ()
     resize_window("r", 3)
+end, { noremap = true, silent = true })
+
+
+-- Git
+vim.keymap.set("n", "<C-g>", function ()
+    vim.cmd("LazyGit")
 end, { noremap = true, silent = true })
 
