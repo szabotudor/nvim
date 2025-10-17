@@ -1,5 +1,20 @@
 return {
     {
+        "akinsho/toggleterm.nvim",
+
+        version = "*",
+
+        opts = {
+            open_mapping = [[`]],
+        },
+
+        config = function (_, opts)
+            local term = require("toggleterm")
+            term.setup(opts)
+        end,
+    },
+
+    {
         "nvim-treesitter/nvim-treesitter",
 
         branch = "main",
