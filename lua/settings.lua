@@ -95,7 +95,7 @@ end
 vim.keymap.set("n", "<C-w>s", "Nop")
 vim.keymap.set("n", "<C-w>h", "<C-w>s")
 
-function resize_window(dir, delta)
+local function resize_window(dir, delta)
     local win = vim.api.nvim_get_current_win()
 
     if dir == "u" then
@@ -120,6 +120,15 @@ vim.keymap.set("n", "<C-w>a", function ()
 end, { noremap = true, silent = true })
 vim.keymap.set("n", "<C-w>d", function ()
     resize_window("r", 3)
+end, { noremap = true, silent = true })
+
+
+-- LSP
+
+vim.keymap.set("n", ".", function ()
+    vim.diagnostic.open_float({
+        border = "rounded"
+  })
 end, { noremap = true, silent = true })
 
 
