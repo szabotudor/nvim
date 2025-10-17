@@ -58,6 +58,11 @@ end, { noremap = true, silent = true })
 
 -- Moving
 
+vim.keymap.set({ "n", "v" }, "w", "k", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "s", "j", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "a", "h", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "d", "l", { noremap = true, silent = true })
+
 local move10 = {
     ["<S-Up>"] = "10k",
     ["<S-Down>"] = "10j",
@@ -70,4 +75,37 @@ for key, cmd in pairs(move10) do
 
     vim.keymap.set("i", key, "<C-o>" .. cmd, { noremap = true, silent = true })
 end
+
+
+-- Window navigation
+
+vim.keymap.set("n", "<C-w>s", "Nop")
+vim.keymap.set("n", "<C-w>h", "<C-w>s")
+
+function resize_window(dir, delta)
+    local win = vim.api.nvim_get_current_win()
+
+    if dir == "u" then
+        vim.api.nvim_win_set_height(win, vim.api.nvim_win_get_height(win) + delta)
+    elseif dir == "d" then
+        vim.api.nvim_win_set_height(win, vim.api.nvim_win_get_height(win) - delta)
+    elseif dir == "l" then
+        vim.api.nvim_win_set_width(win, vim.api.nvim_win_get_width(win) - delta)
+    elseif dir == "r" then
+        vim.api.nvim_win_set_width(win, vim.api.nvim_win_get_width(win) + delta)
+    end
+end
+
+vim.keymap.set("n", "<C-w>w", function ()
+    resize_window("u", 3)
+end, { noremap = true, silent = true })
+vim.keymap.set("n", "<C-w>s", function ()
+    resize_window("d", 3)
+end, { noremap = true, silent = true })
+vim.keymap.set("n", "<C-w>a", function ()
+    resize_window("l", 3)
+end, { noremap = true, silent = true })
+vim.keymap.set("n", "<C-w>d", function ()
+    resize_window("r", 3)
+end, { noremap = true, silent = true })
 
