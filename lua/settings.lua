@@ -167,6 +167,8 @@ function ON_ATTACH_NVIM_TREE(bufnr)
     vim.keymap.set("n", "c", api.fs.copy.node, opts("Copy selection"))
     vim.keymap.set("n", "x", api.fs.cut, opts("Cut selection"))
     vim.keymap.set("n", "v", api.fs.paste, opts("Paste copy/cut buffer"))
+
+    vim.keymap.set("n", "r", api.fs.rename, opts("Rename selection"))
 end
 
 
