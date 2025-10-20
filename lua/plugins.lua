@@ -1,5 +1,11 @@
 return {
     {
+        "nvim-tree/nvim-web-devicons",
+
+        opts = {},
+    },
+
+    {
         "akinsho/toggleterm.nvim",
 
         version = "*",
