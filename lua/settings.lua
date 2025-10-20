@@ -122,6 +122,10 @@ vim.keymap.set("n", "<C-w>d", function ()
     resize_window("r", 3)
 end, { noremap = true, silent = true })
 
+-- Go back/forward
+vim.keymap.set("n", "]", vim.api.nvim_replace_termcodes("<C-i>", true, false, true), { noremap = true })
+vim.keymap.set("n", "[", "<C-o>", { noremap = true })
+
 
 -- LSP
 
@@ -148,4 +152,13 @@ pattern = "NvimTree",
         end, { buffer = true, desc = "Create new file in NvimTree" })
     end,
 })
+
+
+-- Keymaps that require the lsp buffer
+
+function on_attach(_, buffnr)
+    local opts = { buffer = buffnr, silent = true, noremap = true }
+
+    vim.keymap.set("n", ",", vim.lsp.buf.references, opts)
+end
 

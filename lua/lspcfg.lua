@@ -32,10 +32,13 @@ function addlsp(name, allow_manual_cfg)
                 "cp", scratchdir .. "/lsp/" .. name .. ".lua", lspadv
             })
         end
-
-        vim.lsp.config(name, require("lspadv." .. name))
+        config = require("lspadv." .. name)
+        config.on_attach = on_attach
+        vim.lsp.config(name, config)
     else
-        vim.lsp.config(name, require("lsp." .. name))
+        config = require("lsp." .. name)
+        config.on_attach = on_attach
+        vim.lsp.config(name, config)
     end
 
     vim.lsp.enable(name)
