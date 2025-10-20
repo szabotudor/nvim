@@ -19,7 +19,7 @@ end
 local lsp_dir = vim.fn.stdpath("data") .. "/lspconfig/?.lua"
 package.path = lsp_dir .. ";" .. package.path
 
-function addlsp(name, allow_manual_cfg)
+local function addlsp(name, allow_manual_cfg)
     local lspadv = vim.fn.stdpath("config") .. "/lua/lspadv"
 
     if allow_manual_cfg then
@@ -32,12 +32,12 @@ function addlsp(name, allow_manual_cfg)
                 "cp", scratchdir .. "/lsp/" .. name .. ".lua", lspadv
             })
         end
-        config = require("lspadv." .. name)
-        config.on_attach = on_attach
+        local config = require("lspadv." .. name)
+        config.on_attach = ON_ATTACH
         vim.lsp.config(name, config)
     else
-        config = require("lsp." .. name)
-        config.on_attach = on_attach
+        local config = require("lsp." .. name)
+        config.on_attach = ON_ATTACH
         vim.lsp.config(name, config)
     end
 
