@@ -147,20 +147,22 @@ end, { noremap = true, silent = true })
 
 -- File Browser
 
-vim.api.nvim_create_autocmd("FileType", {
-pattern = "NvimTree",
-    callback = function()
-        vim.keymap.set("n", "a", "<Nop>", { noremap = true, silent = true })
-        vim.keymap.set("n", "n", function()
-            require("nvim-tree.api").fs.create()
-        end, { buffer = true, desc = "Create new file in NvimTree" })
-    end,
-})
+function ON_ATTACH_NVIM_TREE()
+    vim.keymap.set("n", "a", "<Nop>", { noremap = true, silent = true })
+    vim.keymap.set("n", "n", function()
+        require("nvim-tree.api").fs.create()
+    end, { buffer = true, desc = "Create new file in NvimTree" })
+
+    vim.keymap.set("n", "f", function ()
+        vim.cmd("Telescope find_files")
+    end, { noremap = true, silent = true })
+end
+
 
 
 -- Keymaps that require the lsp buffer
 
-function on_attach(_, buffnr)
+function ON_ATTACH(_, buffnr)
     local opts = { buffer = buffnr, silent = true, noremap = true }
 
     vim.keymap.set("n", ",", vim.lsp.buf.references, opts)
@@ -169,10 +171,13 @@ end
 
 -- Telescope
 
-vim.keymap.set("n", "f", function()
+vim.keymap.set("n", "f", function ()
     vim.cmd("Telescope current_buffer_fuzzy_find")
 end, { noremap = true, silent = true, desc = "Search in current file" })
-vim.keymap.set("n", "<C-f>", function()
+vim.keymap.set("n", "<C-f>", function ()
     vim.cmd("Telescope live_grep")
 end, { noremap = true, silent = true, desc = "Search text in project" })
+vim.keymap.set("n", "<S-f>", function ()
+    vim.cmd("Telescope find_files")
+end)
 
