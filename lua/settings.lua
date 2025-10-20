@@ -136,9 +136,13 @@ vim.keymap.set("n", ".", function ()
 end, { noremap = true, silent = true })
 
 
--- Git
+-- Git/other plugins
 vim.keymap.set("n", "gg", function () vim.cmd("LazyGit") end, { noremap = true, silent = true })
 vim.keymap.set("n", "g", function () vim.cmd("LazyGit") end, { noremap = true, silent = true })
+
+vim.keymap.set("n", "l", function ()
+    vim.cmd("Lazy")
+end, { noremap = true, silent = true })
 
 
 -- File Browser
