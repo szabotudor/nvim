@@ -38,7 +38,6 @@ vim.keymap.set({ "n", "v" }, "<C-x>", '"+d', { noremap = true, silent = true })
 -- Paste in insert mode
 vim.keymap.set({ "i" }, "<C-v>", function()
     vim.api.nvim_put({ vim.fn.getreg('+') }, 'c', true, true)
-    print("Hello World!")
 end, { noremap = true, silent = true })
 
 -- Paste in normal mode
