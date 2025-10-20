@@ -16,6 +16,7 @@ return {
 
     {
         "nvim-treesitter/nvim-treesitter",
+        tag = "v0.10.0",
 
         branch = "main",
         lazy = false,
@@ -106,5 +107,21 @@ return {
         keys = {
             { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" }
         }
+    },
+
+    {
+        "nvim-telescope/telescope.nvim",
+        tag = "0.1.8",
+
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "sharkdp/fd",
+            "nvim-lua/plenary.nvim",
+            "BurntSushi/ripgrep",
+        },
+
+        opts = {
+            buffer_previewer_maker = require('telescope.previewers').buffer_previewer_maker
+        },
     },
 }

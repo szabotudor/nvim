@@ -166,3 +166,13 @@ function on_attach(_, buffnr)
     vim.keymap.set("n", ",", vim.lsp.buf.references, opts)
 end
 
+
+-- Telescope
+
+vim.keymap.set("n", "f", function()
+    vim.cmd("Telescope current_buffer_fuzzy_find")
+end, { noremap = true, silent = true, desc = "Search in current file" })
+vim.keymap.set("n", "<C-f>", function()
+    vim.cmd("Telescope live_grep")
+end, { noremap = true, silent = true, desc = "Search text in project" })
+
