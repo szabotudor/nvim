@@ -190,5 +190,21 @@ vim.keymap.set("n", "<C-f>", function ()
 end, { noremap = true, silent = true, desc = "Search text in project" })
 vim.keymap.set("n", "<S-f>", function ()
     vim.cmd("Telescope find_files")
-end)
+end, { noremap = true, silent = true, desc = "Search files in cwd" })
+
+local function custom_dir_live_grep()
+    local folder = vim.fn.input({
+        prompt = "Input a subdirectory to search: ",
+        completion = "dir",
+    })
+    if folder == nil or folder == "" then
+        return
+    end
+    require("telescope.builtin").live_grep({
+        cwd = folder
+    })
+end
+
+vim.keymap.set("n", "<C-f><C-f>", custom_dir_live_grep, { noremap = true, silent = true })
+vim.keymap.set("n", "<C-f>f", custom_dir_live_grep, { noremap = true, silent = true })
 
