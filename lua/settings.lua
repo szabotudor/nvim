@@ -147,15 +147,27 @@ end, { noremap = true, silent = true })
 
 -- File Browser
 
-function ON_ATTACH_NVIM_TREE()
-    vim.keymap.set("n", "a", "<Nop>", { noremap = true, silent = true })
-    vim.keymap.set("n", "n", function()
-        require("nvim-tree.api").fs.create()
-    end, { buffer = true, desc = "Create new file in NvimTree" })
+function ON_ATTACH_NVIM_TREE(bufnr)
+    local api = require("nvim-tree.api")
+    local function opts(desc)
+        return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
+    end
+
+    vim.keymap.set("n", "<CR>", api.node.open.edit, opts("Open selection"))
+    vim.keymap.set("n", "<BS>", api.tree.change_root_to_node, opts("Open selection"))
+
+    vim.keymap.set("n", "n", api.fs.create, opts("Create file/directory"))
+
+    vim.keymap.set("n", "<Del>", api.fs.trash, opts("Move selection to trash"))
+    vim.keymap.set("n", "<S-Del>", api.fs.remove, opts("Permanently delete selection"))
 
     vim.keymap.set("n", "f", function ()
         vim.cmd("Telescope find_files")
-    end, { noremap = true, silent = true })
+    end, opts("Find files"))
+
+    vim.keymap.set("n", "c", api.fs.copy.node, opts("Copy selection"))
+    vim.keymap.set("n", "x", api.fs.cut, opts("Cut selection"))
+    vim.keymap.set("n", "v", api.fs.paste, opts("Paste copy/cut buffer"))
 end
 
 
