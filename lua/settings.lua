@@ -97,29 +97,56 @@ vim.keymap.set("n", "<C-w>h", "<C-w>s")
 local function resize_window(dir, delta)
     local win = vim.api.nvim_get_current_win()
 
-    if dir == "u" then
-        vim.api.nvim_win_set_height(win, vim.api.nvim_win_get_height(win) + delta)
-    elseif dir == "d" then
-        vim.api.nvim_win_set_height(win, vim.api.nvim_win_get_height(win) - delta)
-    elseif dir == "l" then
-        vim.api.nvim_win_set_width(win, vim.api.nvim_win_get_width(win) - delta)
-    elseif dir == "r" then
-        vim.api.nvim_win_set_width(win, vim.api.nvim_win_get_width(win) + delta)
+    delta = vim.v.count > 0 and vim.v.count * delta or delta
+
+    if dir == "v" then
+        vim.api.nvim_win_set_height(win, vim.api.nvim_win_get_height(win) + math.floor(delta ~= 0 and (delta * (vim.v.count ~= 0 and 1 or math.floor(vim.api.nvim_win_get_height(win) * 0.2))) or 9999))
+    elseif dir == "h" then
+        vim.api.nvim_win_set_width(win, vim.api.nvim_win_get_width(win) + math.floor(delta ~= 0 and (delta * (vim.v.count ~= 0 and 1 or math.floor(vim.api.nvim_win_get_width(win) * 0.2))) or 9999))
     end
 end
 
-vim.keymap.set("n", "<C-w>w", function ()
-    resize_window("u", 3)
+vim.keymap.set("n", "<C-w>gv", function ()
+    resize_window("v", 1)
 end, { noremap = true, silent = true })
-vim.keymap.set("n", "<C-w>s", function ()
-    resize_window("d", 3)
+
+vim.keymap.set("n", "<C-w>gh", function ()
+    resize_window("h", 1)
 end, { noremap = true, silent = true })
-vim.keymap.set("n", "<C-w>a", function ()
-    resize_window("l", 3)
+
+vim.keymap.set("n", "<C-w>gg", function ()
+    resize_window("v", -1)
+    resize_window("h", -1)
 end, { noremap = true, silent = true })
-vim.keymap.set("n", "<C-w>d", function ()
-    resize_window("r", 3)
+
+
+vim.keymap.set("n", "<C-w>sv", function ()
+    resize_window("v", -1)
 end, { noremap = true, silent = true })
+
+vim.keymap.set("n", "<C-w>sh", function ()
+    resize_window("h", -1)
+end, { noremap = true, silent = true })
+
+vim.keymap.set("n", "<C-w>ss", function ()
+    resize_window("v", -1)
+    resize_window("h", -1)
+end, { noremap = true, silent = true })
+
+
+vim.keymap.set("n", "<C-w>mv", function ()
+    resize_window("v", 0)
+end, { noremap = true, silent = true })
+
+vim.keymap.set("n", "<C-w>mh", function ()
+    resize_window("h", 0)
+end, { noremap = true, silent = true })
+
+vim.keymap.set("n", "<C-w>mm", function ()
+    resize_window("v", 0)
+    resize_window("h", 0)
+end, { noremap = true, silent = true })
+
 
 -- Go back/forward
 vim.keymap.set("n", "]", vim.api.nvim_replace_termcodes("<C-i>", true, false, true), { noremap = true })
@@ -153,6 +180,9 @@ function ON_ATTACH_NVIM_TREE(bufnr)
     end
 
     vim.keymap.set("n", "<CR>", api.node.open.edit, opts("Open selection"))
+    vim.keymap.set("n", "o", api.node.open.vertical, opts("Open selection in a new vertical window"))
+    vim.keymap.set("n", "ov", api.node.open.vertical, opts("Open selection in a new vertical window"))
+    vim.keymap.set("n", "oh", api.node.open.horizontal, opts("Open selection in a new vertical window"))
     vim.keymap.set("n", "<BS>", api.tree.change_root_to_node, opts("Open selection"))
 
     vim.keymap.set("n", "n", api.fs.create, opts("Create file/directory"))
