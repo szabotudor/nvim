@@ -28,6 +28,11 @@ local function addlsp(name, allow_manual_cfg)
                 "mkdir", "-p", lspadv
             })
 
+            if not vim.loop.fs_stat(scratchdir .. "/lsp/" .. name .. ".lua") then
+                print("LSP '" .. name .. "' not found. Searched:\n'" .. lsp_dir .. "'\n'" .. lspadv .. "'\n")
+                return
+            end
+
             vim.fn.system({
                 "cp", scratchdir .. "/lsp/" .. name .. ".lua", lspadv
             })
@@ -36,6 +41,11 @@ local function addlsp(name, allow_manual_cfg)
         config.on_attach = ON_ATTACH
         vim.lsp.config(name, config)
     else
+        if not vim.loop.fs_stat(scratchdir .. "/lsp/" .. name .. ".lua") then
+            print("LSP '" .. name .. "' not found. Searched:\n'" .. lsp_dir .. "'\n'" .. lspadv .. "'\n")
+            return
+        end
+
         local config = require("lsp." .. name)
         config.on_attach = ON_ATTACH
         vim.lsp.config(name, config)
