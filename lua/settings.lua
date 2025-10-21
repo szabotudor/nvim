@@ -149,8 +149,8 @@ end, { noremap = true, silent = true })
 
 
 -- Go back/forward
-vim.keymap.set("n", "]", vim.api.nvim_replace_termcodes("<C-i>", true, false, true), { noremap = true })
-vim.keymap.set("n", "[", "<C-o>", { noremap = true })
+vim.keymap.set("n", ")", vim.api.nvim_replace_termcodes("<C-i>", true, false, true), { noremap = true })
+vim.keymap.set("n", "(", "<C-o>", { noremap = true })
 
 
 -- LSP
