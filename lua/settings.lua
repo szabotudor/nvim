@@ -67,6 +67,10 @@ vim.keymap.set({ "n", "v", "i" }, "<C-s>", function()
     vim.cmd("write")
 end, { noremap = true, silent = true })
 
+vim.keymap.set({ "n", "v" }, "<S-s>", function ()
+    vim.cmd("wall")
+end, { noremap = true, silent = true })
+
 
 -- Moving
 
