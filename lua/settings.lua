@@ -170,6 +170,9 @@ vim.keymap.set("n", "l", function ()
     vim.cmd("Lazy")
 end, { noremap = true, silent = true })
 
+vim.keymap.set({ "t", "n" }, "`", function () vim.cmd[[ToggleTerm]] end, { noremap = true, silent = true })
+vim.keymap.set("t", "<C-e>", "<C-\\><C-n>", { noremap = true, silent = true })
+
 
 -- File Browser
 
@@ -199,8 +202,11 @@ function ON_ATTACH_NVIM_TREE(bufnr)
     vim.keymap.set("n", "v", api.fs.paste, opts("Paste copy/cut buffer"))
 
     vim.keymap.set("n", "r", api.fs.rename, opts("Rename selection"))
+
+    vim.keymap.set("n", "t", function() vim.cmd[[NvimTreeToggle]] end)
 end
 
+vim.keymap.set("n", "t", function() vim.cmd[[NvimTreeToggle]] end)
 
 
 -- Keymaps that require the lsp buffer

@@ -11,7 +11,7 @@ return {
         version = "*",
 
         opts = {
-            open_mapping = [[`]],
+            direction = "float",
         },
 
         config = function (_, opts)
