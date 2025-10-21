@@ -209,6 +209,10 @@ function ON_ATTACH(_, buffnr)
     local opts = { buffer = buffnr, silent = true, noremap = true }
 
     vim.keymap.set("n", ",", vim.lsp.buf.references, opts)
+    vim.keymap.set("n", "<F2>", function ()
+        -- local new_name = vim.fn.input({ prompt = "New name: ", text = vim.fn.expand("<cword>") })
+        vim.lsp.buf.rename()
+    end, opts)
 end
 
 
