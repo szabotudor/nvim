@@ -49,3 +49,6 @@ addlsp("lua_ls", true)
 addlsp("rust_analyzer")
 addlsp("clangd")
 
+vim.lsp.handlers["textDocument/semanticTokens/full"] = vim.lsp.semantic_tokens.on_full
+vim.lsp.handlers["textDocument/semanticTokens/range"] = vim.lsp.semantic_tokens.on_range
+
