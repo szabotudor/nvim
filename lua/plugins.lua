@@ -51,6 +51,7 @@ return {
                 enabled = true,
                 show_exact_scope = true,
                 show_end = false,
+                show_start = false,
                 highlight = { "Function", "Label" },
             },
         },
