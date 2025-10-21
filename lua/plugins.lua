@@ -140,4 +140,17 @@ return {
             buffer_previewer_maker = require('telescope.previewers').buffer_previewer_maker
         },
     },
+
+
+    {
+        "windowmaker",
+        dir = vim.fn.stdpath("config") .. "/plugins/windowmaker",
+    },
+
+    {
+        "projects.nivm",
+        dir = vim.fn.stdpath("config") .. "/plugins/projects",
+
+        dependencies = { "windowmaker" },
+    },
 }

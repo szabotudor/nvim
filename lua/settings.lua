@@ -254,3 +254,10 @@ end
 vim.keymap.set("n", "<C-f><C-f>", custom_dir_live_grep, { noremap = true, silent = true })
 vim.keymap.set("n", "<C-f>f", custom_dir_live_grep, { noremap = true, silent = true })
 
+
+-- Projects
+
+vim.keymap.set("n", "o", function ()
+    require("projects").show_recent()
+end)
+
