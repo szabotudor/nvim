@@ -119,8 +119,8 @@ vim.keymap.set("n", "<C-w>gh", function ()
 end, { noremap = true, silent = true })
 
 vim.keymap.set("n", "<C-w>gg", function ()
-    resize_window("v", -1)
-    resize_window("h", -1)
+    resize_window("v", 1)
+    resize_window("h", 1)
 end, { noremap = true, silent = true })
 
 
