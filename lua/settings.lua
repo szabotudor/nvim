@@ -231,17 +231,17 @@ vim.keymap.set("n", ".", function ()
         local buf = vim.api.nvim_create_buf(false, true)
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, str_diags)
 
-        local win_pos = diagnostic_window and vim.api.nvim_win_get_position(diagnostic_window) or nil
-        local win_width = diagnostic_window and vim.api.nvim_win_get_width(diagnostic_window) or nil
-        if win_pos == nil or win_width == nil then
+        local win_height = diagnostic_window and vim.api.nvim_win_get_height(diagnostic_window) or nil
+        if win_height == nil then
             return
         end
 
         local opts = {
-            relative = "editor",
-            row = win_pos[1],
-            col = win_pos[2],
-            anchor = "SE",
+            relative = "win",
+            win = diagnostic_window,
+            row = win_height,
+            col = 0,
+            anchor = "NW",
             width = max_diag_len,
             height = #str_diags,
             border = "rounded",
