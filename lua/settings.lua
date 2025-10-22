@@ -197,6 +197,7 @@ vim.keymap.set("n", "(", "<C-o>", { noremap = true })
 
 local diagnostic_window = nil
 local related_diagnostic_window = nil
+local related_diagnostic_uri = nil
 
 vim.keymap.set("n", ".", function ()
     if diagnostic_window then
@@ -215,10 +216,17 @@ vim.keymap.set("n", ".", function ()
         for _, d in ipairs(diags) do
             if d.user_data and d.user_data.lsp and d.user_data.lsp.relatedInformation then
                 for _, ri in ipairs(d.user_data.lsp.relatedInformation) do
-                    local diag = ri.message .. ": " .. ri.location.uri
-                    str_diags[#str_diags+1] = diag
-                    if #diag > max_diag_len then
-                        max_diag_len = #diag
+                    if string.find(string.lower(ri.message), "original", 1, true) then
+                        related_diagnostic_uri = {
+                            uri = vim.uri_to_fname(ri.location.uri),
+                            line = ri.location.range.start.line + 1,
+                            column = ri.location.range.start.character
+                        }
+                        local diag = ri.message .. ": '" .. related_diagnostic_uri.uri .. ':' .. related_diagnostic_uri.line .. ':' .. related_diagnostic_uri.column .. "'"
+                        str_diags[#str_diags+1] = diag
+                        if #diag > max_diag_len then
+                            max_diag_len = #diag
+                        end
                     end
                 end
             end
@@ -227,6 +235,8 @@ vim.keymap.set("n", ".", function ()
         if #str_diags == 0 then
             return
         end
+
+        str_diags[#str_diags+1] = "Press ',' to go to original diagnostic"
 
         local buf = vim.api.nvim_create_buf(false, true)
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, str_diags)
@@ -278,6 +288,7 @@ vim.api.nvim_create_autocmd("WinClosed", {
             if related_diagnostic_window ~= nil then
                 vim.api.nvim_win_close(related_diagnostic_window, true)
                 related_diagnostic_window = nil
+                related_diagnostic_uri = nil
             end
         end
     end
@@ -336,7 +347,14 @@ vim.keymap.set("n", "t", function() vim.cmd[[NvimTreeToggle]] end)
 function ON_ATTACH(_, buffnr)
     local opts = { buffer = buffnr, silent = true, noremap = true }
 
-    vim.keymap.set("n", ",", vim.lsp.buf.references, opts)
+    vim.keymap.set("n", ",", function ()
+        if related_diagnostic_uri then
+            vim.cmd("e " .. related_diagnostic_uri.uri)
+            vim.api.nvim_win_set_cursor(0, { related_diagnostic_uri.line, related_diagnostic_uri.column })
+        else
+            vim.lsp.buf.references()
+        end
+    end, opts)
     vim.keymap.set("n", "<F2>", function ()
         -- local new_name = vim.fn.input({ prompt = "New name: ", text = vim.fn.expand("<cword>") })
         vim.lsp.buf.rename()
