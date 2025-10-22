@@ -335,6 +335,7 @@ function ON_ATTACH_NVIM_TREE(bufnr)
     vim.keymap.set("n", "v", api.fs.paste, opts("Paste copy/cut buffer"))
 
     vim.keymap.set("n", "r", api.fs.rename, opts("Rename selection"))
+    vim.keymap.set("n", "R", function () vim.cmd[[NvimTreeRefresh]] end, opts("Refresh"))
 
     vim.keymap.set("n", "t", function() vim.cmd[[NvimTreeToggle]] end)
 end

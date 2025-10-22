@@ -70,7 +70,12 @@ return {
         opts = {
             view = { width = 30 },
 
-            on_attach = ON_ATTACH_NVIM_TREE
+            on_attach = ON_ATTACH_NVIM_TREE,
+
+            filters = {
+                git_ignored = false,
+                dotfiles = false,
+            },
         },
         init = function()
             vim.g.loaded_netrw = 1
