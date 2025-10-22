@@ -295,7 +295,7 @@ vim.api.nvim_create_autocmd("WinClosed", {
 })
 
 
--- Git/other plugins
+-- Git/terminal/other plugins
 vim.keymap.set("n", "gg", function () vim.cmd("LazyGit") end, { noremap = true, silent = true })
 vim.keymap.set("n", "g", function () vim.cmd("LazyGit") end, { noremap = true, silent = true })
 
@@ -305,6 +305,8 @@ end, { noremap = true, silent = true })
 
 vim.keymap.set({ "t", "n" }, "`", function () vim.cmd[[ToggleTerm]] end, { noremap = true, silent = true })
 vim.keymap.set("t", "<C-e>", "<C-\\><C-n>", { noremap = true, silent = true })
+
+vim.keymap.set("n", "h", function () require("hex").toggle() end, { noremap = true, silent = true })
 
 
 -- File Browser

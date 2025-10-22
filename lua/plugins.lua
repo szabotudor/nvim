@@ -6,6 +6,19 @@ return {
     },
 
     {
+        "RaafatTurki/hex.nvim",
+
+        opts = {
+            is_file_binary_pre_read = function ()
+                return false
+            end,
+            is_file_binary_post_read = function ()
+                return false
+            end,
+        },
+    },
+
+    {
         "akinsho/toggleterm.nvim",
 
         version = "*",
