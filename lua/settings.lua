@@ -196,6 +196,7 @@ vim.keymap.set("n", "(", "<C-o>", { noremap = true })
 -- LSP
 
 local diagnostic_window = nil
+local related_diagnostic_window = nil
 
 vim.keymap.set("n", ".", function ()
     if diagnostic_window then
@@ -205,6 +206,50 @@ vim.keymap.set("n", ".", function ()
             border = "rounded"
         })
         diagnostic_window = win
+
+        local line = vim.api.nvim_win_get_cursor(0)[1] - 1
+        local diags = vim.diagnostic.get(0, { lnum = line })
+
+        local str_diags = {}
+        local max_diag_len = 0
+        for _, d in ipairs(diags) do
+            if d.user_data and d.user_data.lsp and d.user_data.lsp.relatedInformation then
+                for _, ri in ipairs(d.user_data.lsp.relatedInformation) do
+                    local diag = ri.message .. ": " .. ri.location.uri
+                    str_diags[#str_diags+1] = diag
+                    if #diag > max_diag_len then
+                        max_diag_len = #diag
+                    end
+                end
+            end
+        end
+
+        if #str_diags == 0 then
+            return
+        end
+
+        local buf = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_lines(buf, 0, -1, false, str_diags)
+
+        local win_pos = diagnostic_window and vim.api.nvim_win_get_position(diagnostic_window) or nil
+        local win_width = diagnostic_window and vim.api.nvim_win_get_width(diagnostic_window) or nil
+        if win_pos == nil or win_width == nil then
+            return
+        end
+
+        local opts = {
+            relative = "editor",
+            row = win_pos[1],
+            col = win_pos[2],
+            anchor = "SE",
+            width = max_diag_len,
+            height = #str_diags,
+            border = "rounded",
+            title = "Related Diagnostics",
+            style = "minimal",
+        }
+
+        related_diagnostic_window = vim.api.nvim_open_win(buf, false, opts)
     end
 end, { noremap = true, silent = true })
 
@@ -216,6 +261,12 @@ vim.keymap.set("n", "<Esc>", function ()
             end
         end)
         return ""
+    else
+        local cmp = require("blink.cmp")
+        if cmp.is_menu_visible() then
+            cmp.hide()
+            return ""
+        end
     end
     return "<Esc>"
 end, { noremap = true, silent = true, expr = true })
@@ -224,6 +275,10 @@ vim.api.nvim_create_autocmd("WinClosed", {
     callback = function(args)
         if tonumber(args.match) == diagnostic_window then
             diagnostic_window = nil
+            if related_diagnostic_window ~= nil then
+                vim.api.nvim_win_close(related_diagnostic_window, true)
+                related_diagnostic_window = nil
+            end
         end
     end
 })
