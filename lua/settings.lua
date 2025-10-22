@@ -110,6 +110,28 @@ local function resize_window(dir, delta)
     end
 end
 
+local function move_window(dir)
+    local win = vim.api.nvim_get_current_win()
+    local nwin = vim.fn.winnr(dir)
+
+    if nwin == 0 or nwin == win then
+        return
+    end
+
+    nwin = vim.fn.win_getid(nwin)
+    local cursor = vim.api.nvim_win_get_cursor(win)
+    local ncursor = vim.api.nvim_win_get_cursor(nwin)
+
+    local buf = vim.api.nvim_win_get_buf(win)
+    local nbuf = vim.api.nvim_win_get_buf(nwin)
+    vim.api.nvim_win_set_buf(win, nbuf)
+    vim.api.nvim_win_set_buf(nwin, buf)
+
+    vim.api.nvim_set_current_win(nwin)
+    vim.api.nvim_win_set_cursor(nwin, cursor)
+    vim.api.nvim_win_set_cursor(win, ncursor)
+end
+
 vim.keymap.set("n", "<C-w>gv", function ()
     resize_window("v", 1)
 end, { noremap = true, silent = true })
@@ -149,6 +171,20 @@ end, { noremap = true, silent = true })
 vim.keymap.set("n", "<C-w>mm", function ()
     resize_window("v", 0)
     resize_window("h", 0)
+end, { noremap = true, silent = true })
+
+
+vim.keymap.set("n", "<C-w><C-Up>", function ()
+    move_window("k")
+end, { noremap = true, silent = true })
+vim.keymap.set("n", "<C-w><C-Down>", function ()
+    move_window("j")
+end, { noremap = true, silent = true })
+vim.keymap.set("n", "<C-w><C-Left>", function ()
+    move_window("h")
+end, { noremap = true, silent = true })
+vim.keymap.set("n", "<C-w><C-Right>", function ()
+    move_window("l")
 end, { noremap = true, silent = true })
 
 
