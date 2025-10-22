@@ -195,11 +195,38 @@ vim.keymap.set("n", "(", "<C-o>", { noremap = true })
 
 -- LSP
 
+local diagnostic_window = nil
+
 vim.keymap.set("n", ".", function ()
-    vim.diagnostic.open_float({
-        border = "rounded"
-  })
+    if diagnostic_window then
+        vim.lsp.buf.code_action()
+    else
+        local _, win = vim.diagnostic.open_float({
+            border = "rounded"
+        })
+        diagnostic_window = win
+    end
 end, { noremap = true, silent = true })
+
+vim.keymap.set("n", "<Esc>", function ()
+    if diagnostic_window then
+        vim.schedule(function ()
+            if vim.api.nvim_win_is_valid(diagnostic_window) then
+                vim.api.nvim_win_close(diagnostic_window, true)
+            end
+        end)
+        return ""
+    end
+    return "<Esc>"
+end, { noremap = true, silent = true, expr = true })
+
+vim.api.nvim_create_autocmd("WinClosed", {
+    callback = function(args)
+        if tonumber(args.match) == diagnostic_window then
+            diagnostic_window = nil
+        end
+    end
+})
 
 
 -- Git/other plugins
