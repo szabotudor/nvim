@@ -67,7 +67,7 @@ vim.keymap.set({ "n", "v", "i" }, "<C-s>", function()
     vim.cmd("write")
 end, { noremap = true, silent = true })
 
-vim.keymap.set({ "n", "v" }, "<S-s>", function ()
+vim.keymap.set({ "n", "v" }, "<S-s>", function()
     vim.cmd("wall")
 end, { noremap = true, silent = true })
 
@@ -104,9 +104,15 @@ local function resize_window(dir, delta)
     delta = vim.v.count > 0 and vim.v.count * delta or delta
 
     if dir == "v" then
-        vim.api.nvim_win_set_height(win, vim.api.nvim_win_get_height(win) + math.floor(delta ~= 0 and (delta * (vim.v.count ~= 0 and 1 or math.floor(vim.api.nvim_win_get_height(win) * 0.2))) or 9999))
+        vim.api.nvim_win_set_height(win,
+            vim.api.nvim_win_get_height(win) +
+            math.floor(delta ~= 0 and
+                (delta * (vim.v.count ~= 0 and 1 or math.floor(vim.api.nvim_win_get_height(win) * 0.2))) or 9999))
     elseif dir == "h" then
-        vim.api.nvim_win_set_width(win, vim.api.nvim_win_get_width(win) + math.floor(delta ~= 0 and (delta * (vim.v.count ~= 0 and 1 or math.floor(vim.api.nvim_win_get_width(win) * 0.2))) or 9999))
+        vim.api.nvim_win_set_width(win,
+            vim.api.nvim_win_get_width(win) +
+            math.floor(delta ~= 0 and
+                (delta * (vim.v.count ~= 0 and 1 or math.floor(vim.api.nvim_win_get_width(win) * 0.2))) or 9999))
     end
 end
 
@@ -132,58 +138,58 @@ local function move_window(dir)
     vim.api.nvim_win_set_cursor(win, ncursor)
 end
 
-vim.keymap.set("n", "<C-w>gv", function ()
+vim.keymap.set("n", "<C-w>gv", function()
     resize_window("v", 1)
 end, { noremap = true, silent = true })
 
-vim.keymap.set("n", "<C-w>gh", function ()
+vim.keymap.set("n", "<C-w>gh", function()
     resize_window("h", 1)
 end, { noremap = true, silent = true })
 
-vim.keymap.set("n", "<C-w>gg", function ()
+vim.keymap.set("n", "<C-w>gg", function()
     resize_window("v", 1)
     resize_window("h", 1)
 end, { noremap = true, silent = true })
 
 
-vim.keymap.set("n", "<C-w>sv", function ()
+vim.keymap.set("n", "<C-w>sv", function()
     resize_window("v", -1)
 end, { noremap = true, silent = true })
 
-vim.keymap.set("n", "<C-w>sh", function ()
+vim.keymap.set("n", "<C-w>sh", function()
     resize_window("h", -1)
 end, { noremap = true, silent = true })
 
-vim.keymap.set("n", "<C-w>ss", function ()
+vim.keymap.set("n", "<C-w>ss", function()
     resize_window("v", -1)
     resize_window("h", -1)
 end, { noremap = true, silent = true })
 
 
-vim.keymap.set("n", "<C-w>mv", function ()
+vim.keymap.set("n", "<C-w>mv", function()
     resize_window("v", 0)
 end, { noremap = true, silent = true })
 
-vim.keymap.set("n", "<C-w>mh", function ()
+vim.keymap.set("n", "<C-w>mh", function()
     resize_window("h", 0)
 end, { noremap = true, silent = true })
 
-vim.keymap.set("n", "<C-w>mm", function ()
+vim.keymap.set("n", "<C-w>mm", function()
     resize_window("v", 0)
     resize_window("h", 0)
 end, { noremap = true, silent = true })
 
 
-vim.keymap.set("n", "<C-w><C-Up>", function ()
+vim.keymap.set("n", "<C-w><C-Up>", function()
     move_window("k")
 end, { noremap = true, silent = true })
-vim.keymap.set("n", "<C-w><C-Down>", function ()
+vim.keymap.set("n", "<C-w><C-Down>", function()
     move_window("j")
 end, { noremap = true, silent = true })
-vim.keymap.set("n", "<C-w><C-Left>", function ()
+vim.keymap.set("n", "<C-w><C-Left>", function()
     move_window("h")
 end, { noremap = true, silent = true })
-vim.keymap.set("n", "<C-w><C-Right>", function ()
+vim.keymap.set("n", "<C-w><C-Right>", function()
     move_window("l")
 end, { noremap = true, silent = true })
 
@@ -199,13 +205,17 @@ local diagnostic_window = nil
 local related_diagnostic_window = nil
 local related_diagnostic_uri = nil
 
-vim.keymap.set("n", ".", function ()
+vim.keymap.set("n", ".", function()
     if diagnostic_window then
         vim.lsp.buf.code_action()
     else
         local _, win = vim.diagnostic.open_float({
             border = "rounded"
         })
+
+        if not win then
+            vim.lsp.buf.hover()
+        end
         diagnostic_window = win
 
         local line = vim.api.nvim_win_get_cursor(0)[1] - 1
@@ -222,8 +232,12 @@ vim.keymap.set("n", ".", function ()
                             line = ri.location.range.start.line + 1,
                             column = ri.location.range.start.character
                         }
-                        local diag = ri.message .. ": '" .. related_diagnostic_uri.uri .. ':' .. related_diagnostic_uri.line .. ':' .. related_diagnostic_uri.column .. "'"
-                        str_diags[#str_diags+1] = diag
+                        local diag = ri.message ..
+                            ": '" ..
+                            related_diagnostic_uri.uri ..
+                            ':' .. related_diagnostic_uri.line ..
+                            ':' .. related_diagnostic_uri.column .. "'"
+                        str_diags[#str_diags + 1] = diag
                         if #diag > max_diag_len then
                             max_diag_len = #diag
                         end
@@ -236,7 +250,7 @@ vim.keymap.set("n", ".", function ()
             return
         end
 
-        str_diags[#str_diags+1] = "Press ',' to go to original diagnostic"
+        str_diags[#str_diags + 1] = "Press ',' to go to original diagnostic"
 
         local buf = vim.api.nvim_create_buf(false, true)
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, str_diags)
@@ -263,9 +277,9 @@ vim.keymap.set("n", ".", function ()
     end
 end, { noremap = true, silent = true })
 
-vim.keymap.set("n", "<Esc>", function ()
+vim.keymap.set("n", "<Esc>", function()
     if diagnostic_window then
-        vim.schedule(function ()
+        vim.schedule(function()
             if vim.api.nvim_win_is_valid(diagnostic_window) then
                 vim.api.nvim_win_close(diagnostic_window, true)
             end
@@ -296,17 +310,17 @@ vim.api.nvim_create_autocmd("WinClosed", {
 
 
 -- Git/terminal/other plugins
-vim.keymap.set("n", "gg", function () vim.cmd("LazyGit") end, { noremap = true, silent = true })
-vim.keymap.set("n", "g", function () vim.cmd("LazyGit") end, { noremap = true, silent = true })
+vim.keymap.set("n", "gg", function() vim.cmd("LazyGit") end, { noremap = true, silent = true })
+vim.keymap.set("n", "g", function() vim.cmd("LazyGit") end, { noremap = true, silent = true })
 
-vim.keymap.set("n", "l", function ()
+vim.keymap.set("n", "l", function()
     vim.cmd("Lazy")
 end, { noremap = true, silent = true })
 
-vim.keymap.set({ "t", "n" }, "`", function () vim.cmd[[ToggleTerm]] end, { noremap = true, silent = true })
+vim.keymap.set({ "t", "n" }, "`", function() vim.cmd [[ToggleTerm]] end, { noremap = true, silent = true })
 vim.keymap.set("t", "<C-e>", "<C-\\><C-n>", { noremap = true, silent = true })
 
-vim.keymap.set("n", "h", function () require("hex").toggle() end, { noremap = true, silent = true })
+vim.keymap.set("n", "h", function() require("hex").toggle() end, { noremap = true, silent = true })
 
 
 -- File Browser
@@ -328,7 +342,7 @@ function ON_ATTACH_NVIM_TREE(bufnr)
     vim.keymap.set("n", "<Del>", api.fs.trash, opts("Move selection to trash"))
     vim.keymap.set("n", "<S-Del>", api.fs.remove, opts("Permanently delete selection"))
 
-    vim.keymap.set("n", "f", function ()
+    vim.keymap.set("n", "f", function()
         vim.cmd("Telescope find_files")
     end, opts("Find files"))
 
@@ -337,12 +351,12 @@ function ON_ATTACH_NVIM_TREE(bufnr)
     vim.keymap.set("n", "v", api.fs.paste, opts("Paste copy/cut buffer"))
 
     vim.keymap.set("n", "r", api.fs.rename, opts("Rename selection"))
-    vim.keymap.set("n", "R", function () vim.cmd[[NvimTreeRefresh]] end, opts("Refresh"))
+    vim.keymap.set("n", "R", function() vim.cmd [[NvimTreeRefresh]] end, opts("Refresh"))
 
-    vim.keymap.set("n", "t", function() vim.cmd[[NvimTreeToggle]] end)
+    vim.keymap.set("n", "t", function() vim.cmd [[NvimTreeToggle]] end)
 end
 
-vim.keymap.set("n", "t", function() vim.cmd[[NvimTreeToggle]] end)
+vim.keymap.set("n", "t", function() vim.cmd [[NvimTreeToggle]] end)
 
 
 -- Keymaps that require the lsp buffer
@@ -354,13 +368,13 @@ function ON_ATTACH(client, buffnr)
     if client.supports_method("textDocument/formatting") then
         vim.api.nvim_create_autocmd("BufWritePre", {
             buffer = buffnr,
-            callback = function ()
+            callback = function()
                 vim.lsp.buf.format({ bufnr = buffnr })
             end,
         })
     end
 
-    vim.keymap.set("n", ",", function ()
+    vim.keymap.set("n", ",", function()
         if related_diagnostic_uri then
             vim.cmd("e " .. related_diagnostic_uri.uri)
             vim.api.nvim_win_set_cursor(0, { related_diagnostic_uri.line, related_diagnostic_uri.column })
@@ -371,22 +385,21 @@ function ON_ATTACH(client, buffnr)
             })
         end
     end, opts)
-    vim.keymap.set("n", "<F2>", function ()
+    vim.keymap.set("n", "<F2>", function()
         -- local new_name = vim.fn.input({ prompt = "New name: ", text = vim.fn.expand("<cword>") })
         vim.lsp.buf.rename()
     end, opts)
 end
 
-
 -- Telescope
 
-vim.keymap.set("n", "f", function ()
+vim.keymap.set("n", "f", function()
     vim.cmd("Telescope current_buffer_fuzzy_find")
 end, { noremap = true, silent = true, desc = "Search in current file" })
-vim.keymap.set("n", "<C-f>", function ()
+vim.keymap.set("n", "<C-f>", function()
     vim.cmd("Telescope live_grep")
 end, { noremap = true, silent = true, desc = "Search text in project" })
-vim.keymap.set("n", "<S-f>", function ()
+vim.keymap.set("n", "<S-f>", function()
     vim.cmd("Telescope find_files")
 end, { noremap = true, silent = true, desc = "Search files in cwd" })
 
@@ -412,4 +425,3 @@ vim.keymap.set("n", "<C-f>f", custom_dir_live_grep, { noremap = true, silent = t
 --vim.keymap.set("n", "o", function ()
 --    require("projects").show_recent()
 --end)
-
