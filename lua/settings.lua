@@ -349,13 +349,17 @@ vim.keymap.set("n", "t", function() vim.cmd[[NvimTreeToggle]] end)
 
 function ON_ATTACH(_, buffnr)
     local opts = { buffer = buffnr, silent = true, noremap = true }
+    local telescope = require("telescope.builtin")
 
     vim.keymap.set("n", ",", function ()
         if related_diagnostic_uri then
             vim.cmd("e " .. related_diagnostic_uri.uri)
             vim.api.nvim_win_set_cursor(0, { related_diagnostic_uri.line, related_diagnostic_uri.column })
         else
-            vim.lsp.buf.references()
+            telescope.lsp_references({
+                include_current_line = true,
+                fname_width = 50,
+            })
         end
     end, opts)
     vim.keymap.set("n", "<F2>", function ()
