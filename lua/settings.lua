@@ -347,9 +347,18 @@ vim.keymap.set("n", "t", function() vim.cmd[[NvimTreeToggle]] end)
 
 -- Keymaps that require the lsp buffer
 
-function ON_ATTACH(_, buffnr)
+function ON_ATTACH(client, buffnr)
     local opts = { buffer = buffnr, silent = true, noremap = true }
     local telescope = require("telescope.builtin")
+
+    if client.supports_method("textDocument/formatting") then
+        vim.api.nvim_create_autocmd("BufWritePre", {
+            buffer = buffnr,
+            callback = function ()
+                vim.lsp.buf.format({ bufnr = buffnr })
+            end,
+        })
+    end
 
     vim.keymap.set("n", ",", function ()
         if related_diagnostic_uri then
