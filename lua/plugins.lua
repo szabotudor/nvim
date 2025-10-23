@@ -9,10 +9,10 @@ return {
         "RaafatTurki/hex.nvim",
 
         opts = {
-            is_file_binary_pre_read = function ()
+            is_file_binary_pre_read = function()
                 return false
             end,
-            is_file_binary_post_read = function ()
+            is_file_binary_post_read = function()
                 return false
             end,
         },
@@ -27,7 +27,7 @@ return {
             direction = "float",
         },
 
-        config = function (_, opts)
+        config = function(_, opts)
             local term = require("toggleterm")
             term.setup(opts)
         end,
@@ -69,7 +69,7 @@ return {
             },
         },
 
-        config = function (_, opts)
+        config = function(_, opts)
             local hooks = require("ibl.hooks")
 
             hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
@@ -113,12 +113,21 @@ return {
 
             keymap = {
                 ["<Tab>"] = {
-                    function (cmp)
+                    function(cmp)
                         if cmp.is_visible() then return cmp.accept() end
                     end,
                     "fallback"
                 }
             },
+        },
+    },
+
+    {
+        "rcarriga/nvim-dap-ui",
+
+        dependencies = {
+            "mfussenegger/nvim-dap",
+            "nvim-neotest/nvim-nio",
         },
     },
 

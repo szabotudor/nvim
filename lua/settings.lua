@@ -14,7 +14,6 @@ vim.keymap.set({ "n", "v" }, "<S-Del>", "dd", { noremap = true, silent = true })
 
 -- Enter insert mode
 vim.keymap.set("n", "<S-a>", "<Nop>", { noremap = true, silent = true })
-vim.keymap.set("n", "i", "<Nop>", { noremap = true, silent = true })
 vim.keymap.set("n", "e", "i", { noremap = true, silent = true })
 vim.keymap.set("n", "<S-e>", "a", { noremap = true, silent = true })
 vim.keymap.set("n", "<C-e>", "<S-a>", { noremap = true, silent = true })
@@ -307,6 +306,25 @@ vim.api.nvim_create_autocmd("WinClosed", {
         end
     end
 })
+
+
+-- Debugger
+
+vim.keymap.set("n", "b", function()
+    require("dap").toggle_breakpoint()
+end, { noremap = true, silent = true })
+
+vim.keymap.set("n", "c", function()
+    require("dap").continue()
+end, { noremap = true, silent = true })
+
+vim.keymap.set("n", "n", function()
+    require("dap").step_over()
+end, { noremap = true, silent = true })
+
+vim.keymap.set("n", "i", function()
+    require("dap").step_into()
+end, { noremap = true, silent = true })
 
 
 -- Git/terminal/other plugins
