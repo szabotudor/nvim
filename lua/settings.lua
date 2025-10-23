@@ -387,7 +387,14 @@ function ON_ATTACH(client, buffnr)
         vim.api.nvim_create_autocmd("BufWritePre", {
             buffer = buffnr,
             callback = function()
-                vim.lsp.buf.format({ bufnr = buffnr })
+                vim.lsp.buf.format({
+                    bufnr = buffnr,
+                    formatting_options = {
+                        insertFinalNewline = true,
+                        trimFinalNewlines = true,
+                        trimTrailingWhitespace = true,
+                    },
+                })
             end,
         })
     end
