@@ -24,7 +24,7 @@ return {
         version = "*",
 
         opts = {
-            direction = "float",
+            direction = "horizontal",
         },
 
         config = function(_, opts)
