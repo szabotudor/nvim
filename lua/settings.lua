@@ -315,7 +315,8 @@ vim.keymap.set("n", "b", function()
 end, { noremap = true, silent = true })
 
 vim.keymap.set("n", "c", function()
-    require("dap").continue()
+    SEARCH_DEBUG_CFG()
+    --    require("dap").continue()
 end, { noremap = true, silent = true })
 
 vim.keymap.set("n", "n", function()

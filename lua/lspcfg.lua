@@ -67,5 +67,46 @@ vim.lsp.handlers["textDocument/semanticTokens/range"] = vim.lsp.semantic_tokens.
 -- Debugger
 
 function SEARCH_DEBUG_CFG()
+    local dap = require("dap")
+
+    local session = dap.session()
+
+    if session then
+        dap.continue()
+        return
+    end
+
     local cwd = vim.fn.getcwd()
+    local path = cwd .. "/.nvim/launch.json"
+
+    local ok, content = pcall(vim.fn.readfile, path)
+    if not ok then
+        print("Failed to read '" .. path .. "'")
+        return
+    end
+    content = table.concat(content, "\n")
+
+    local ok2, launch = pcall(vim.fn.json_decode, content)
+    if not ok2 then
+        print("Failed to parse json:\n\n" .. content)
+        return
+    end
+
+    for lang, configs in pairs(launch) do
+        local type = dap.adapters.languages[lang]
+        local defaults = {
+            { "type",    type },
+            { "request", "launch" },
+            { "args",    {} },
+            { "cwd",     cwd },
+        }
+
+        for i, config in ipairs(configs) do
+            for _, default in ipairs(defaults) do configs[i][default[1]] = config[default[1]] or default[2] end
+        end
+
+        dap.configurations[lang] = configs
+    end
+
+    vim.inspect(dap.run(dap.configurations.rust[1]))
 end

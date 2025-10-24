@@ -124,7 +124,27 @@ return {
 
     {
         "mfussenegger/nvim-dap",
-        config = false,
+
+        config = function()
+            local dap = require("dap")
+
+            dap.adapters.gdb = {
+                type = "executable",
+                command = "gdb",
+                args = { "--interpreter=dap", "--eval-command", "set print pretty on" },
+            }
+
+            dap.adapters["rust-gdb"] = {
+                type = "executable",
+                command = vim.fn.stdpath("config") .. "/lua/lspadv/rust-gdb",
+                args = { "--interpreter=dap", "--eval-command", "set print pretty on" },
+            }
+
+            dap.adapters.languages = {
+                rust = "rust-gdb",
+                c = "gdb",
+            }
+        end
     },
 
     {
