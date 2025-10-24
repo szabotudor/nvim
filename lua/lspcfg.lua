@@ -19,7 +19,9 @@ end
 local lsp_dir = vim.fn.stdpath("data") .. "/lspconfig/?.lua"
 package.path = lsp_dir .. ";" .. package.path
 
-local function addlsp(name, allow_manual_cfg)
+languages = {}
+
+local function addlsp(name, language, allow_manual_cfg)
     local lspadv = vim.fn.stdpath("config") .. "/lua/lspadv"
 
     if allow_manual_cfg then
@@ -52,61 +54,14 @@ local function addlsp(name, allow_manual_cfg)
     end
 
     vim.lsp.enable(name)
+    languages[name] = language
 end
 
 
-addlsp("lua_ls", true)
-addlsp("rust_analyzer")
-addlsp("clangd")
-addlsp("bashls", false)
+addlsp("lua_ls", "lua", true)
+addlsp("rust_analyzer", "rust")
+addlsp("clangd", "c")
+addlsp("bashls", "bash", false)
 
 vim.lsp.handlers["textDocument/semanticTokens/full"] = vim.lsp.semantic_tokens.on_full
 vim.lsp.handlers["textDocument/semanticTokens/range"] = vim.lsp.semantic_tokens.on_range
-
-
--- Debugger
-
-function SEARCH_DEBUG_CFG()
-    local dap = require("dap")
-
-    local session = dap.session()
-
-    if session then
-        dap.continue()
-        return
-    end
-
-    local cwd = vim.fn.getcwd()
-    local path = cwd .. "/.nvim/launch.json"
-
-    local ok, content = pcall(vim.fn.readfile, path)
-    if not ok then
-        print("Failed to read '" .. path .. "'")
-        return
-    end
-    content = table.concat(content, "\n")
-
-    local ok2, launch = pcall(vim.fn.json_decode, content)
-    if not ok2 then
-        print("Failed to parse json:\n\n" .. content)
-        return
-    end
-
-    for lang, configs in pairs(launch) do
-        local type = dap.adapters.languages[lang]
-        local defaults = {
-            { "type",    type },
-            { "request", "launch" },
-            { "args",    {} },
-            { "cwd",     cwd },
-        }
-
-        for i, config in ipairs(configs) do
-            for _, default in ipairs(defaults) do configs[i][default[1]] = config[default[1]] or default[2] end
-        end
-
-        dap.configurations[lang] = configs
-    end
-
-    vim.inspect(dap.run(dap.configurations.rust[1]))
-end
