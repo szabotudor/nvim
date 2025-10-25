@@ -1,17 +1,3 @@
-function DEEPCOPY(orig)
-    local orig_type = type(orig)
-    local copy
-    if orig_type == "table" then
-        copy = {}
-        for k, v in pairs(orig) do
-            copy[k] = DEEPCOPY(v)
-        end
-    else
-        copy = orig
-    end
-    return copy
-end
-
 function READ_JSON(path)
     local fd = vim.loop.fs_open(path, "r", 438)
     if not fd then return nil end
