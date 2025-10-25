@@ -182,17 +182,4 @@ return {
         opts = {
         },
     },
-
-
-    {
-        "windowmaker",
-        dir = vim.fn.stdpath("config") .. "/plugins/windowmaker",
-    },
-
-    {
-        "projects.nivm",
-        dir = vim.fn.stdpath("config") .. "/plugins/projects",
-
-        dependencies = { "windowmaker" },
-    },
 }
