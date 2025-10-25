@@ -148,6 +148,17 @@ return {
     },
 
     {
+        "nvimbugger",
+        dependencies = { "mfussenegger/nvim-dap" },
+
+        dir = vim.fn.stdpath("config") .. "/plugins/nvimbugger",
+
+        config = function()
+            require("nvimbugger")
+        end,
+    },
+
+    {
         "kdheepak/lazygit.nvim",
         lazy = true,
         cmd = {

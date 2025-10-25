@@ -1,5 +1,3 @@
-require("debugger")
-
 require("settings")
 
 require("lazy-nvim")
