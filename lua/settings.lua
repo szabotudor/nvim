@@ -26,9 +26,9 @@ vim.keymap.set("n", "<S-Tab>", "<S-v>", { noremap = true, silent = true })
 vim.keymap.set("n", "<S-Tab><S-Tab>", "<C-v>", { noremap = true, silent = true })
 
 -- Undo/redo
-vim.keymap.set({ "n", "i" }, "<C-z>", function() vim.cmd("undo") end, { noremap = true, silent = true })
-vim.keymap.set({ "n", "i" }, "<C-y>", function() vim.cmd("redo") end, { noremap = true, silent = true })
-vim.keymap.set({ "n", "i" }, "<C-r>", function() vim.cmd("redo") end, { noremap = true, silent = true })
+vim.keymap.set({ "n", "i", "s" }, "<C-z>", function() vim.cmd("undo") end, { noremap = true, silent = true })
+vim.keymap.set({ "n", "i", "s" }, "<C-y>", function() vim.cmd("redo") end, { noremap = true, silent = true })
+vim.keymap.set({ "n", "i", "s" }, "<C-r>", function() vim.cmd("redo") end, { noremap = true, silent = true })
 
 -- Copy/cut in normal and visual mode
 vim.keymap.set({ "n", "v" }, "<C-c>", '"+y', { noremap = true, silent = true })
