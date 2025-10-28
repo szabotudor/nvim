@@ -120,6 +120,11 @@ local function move_window(dir)
     local win = vim.api.nvim_get_current_win()
     local nwin = vim.fn.winnr(dir)
 
+    local nwin_type = vim.api.nvim_get_option_value("filetype", { win = nwin })
+    if nwin_type:find("NvimTree") ~= nil or nwin_type:find("TabsWindow") ~= nil then
+        return
+    end
+
     if nwin == 0 or nwin == win then
         return
     end
@@ -191,6 +196,19 @@ vim.keymap.set("n", "<C-w><C-Left>", function()
 end, { noremap = true, silent = true })
 vim.keymap.set("n", "<C-w><C-Right>", function()
     move_window("l")
+end, { noremap = true, silent = true })
+
+
+-- Tab navigation
+
+vim.keymap.set("n", "<C-n>", function()
+    vim.cmd [[tabnew]]
+end, { noremap = true, silent = true })
+vim.keymap.set("n", "<Tab>", function()
+    vim.cmd [[tabnext]]
+end, { noremap = true, silent = true })
+vim.keymap.set("n", "<S-Tab>", function()
+    vim.cmd [[tabprev]]
 end, { noremap = true, silent = true })
 
 
