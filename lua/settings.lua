@@ -21,9 +21,10 @@ vim.keymap.set("n", "<C-e>", "<S-a>", { noremap = true, silent = true })
 -- Block select
 vim.keymap.set("n", "<S-v>", "Nop")
 vim.keymap.set("n", "v", "Nop")
-vim.keymap.set("n", "<Tab>", "v", { noremap = true, silent = true })
-vim.keymap.set("n", "<S-Tab>", "<S-v>", { noremap = true, silent = true })
-vim.keymap.set("n", "<S-Tab><S-Tab>", "<C-v>", { noremap = true, silent = true })
+vim.keymap.set("n", "v", "v", { noremap = true, silent = true })
+vim.keymap.set("n", "<S-v>", "<S-v>", { noremap = true, silent = true })
+vim.keymap.set("n", "<S-v><S-v>", "<C-v>", { noremap = true, silent = true })
+vim.keymap.set("n", "<S-v>v", "<C-v>", { noremap = true, silent = true })
 
 -- Undo/redo
 vim.keymap.set({ "n", "i", "s" }, "<C-z>", function() vim.cmd("undo") end, { noremap = true, silent = true })
