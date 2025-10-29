@@ -223,6 +223,34 @@ local diagnostic_window = nil
 local related_diagnostic_window = nil
 local related_diagnostic_uri = nil
 
+local latent_edit = nil
+
+vim.keymap.set("n", "<CR>", function()
+    if latent_edit then
+        vim.cmd("edit " .. latent_edit)
+        latent_edit = nil
+        return
+    end
+    local url = vim.fn.expand("<cfile>")
+
+    if url == "" then
+        return
+    elseif vim.fn.filereadable(url) == 1 then
+        print("Press <CR> to edit '" .. url)
+        local answer = vim.fn.getchar() == 13
+        if answer then
+            print("Navigate to the window you would like to edit in and press <CR> to edit in that window")
+            latent_edit = url
+        end
+    else
+        print("Press <CR> to open '" .. url .. "' in browser?")
+        local answer = vim.fn.getchar() == 13
+        if answer then
+            vim.fn.jobstart({ "xdg-open", url }, { detatch = true })
+        end
+    end
+end, { noremap = true, silent = true })
+
 vim.keymap.set("n", ".", function()
     if diagnostic_window then
         vim.lsp.buf.code_action()
