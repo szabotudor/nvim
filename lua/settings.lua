@@ -93,6 +93,13 @@ for key, cmd in pairs(move10) do
 end
 
 
+-- Tabs
+
+vim.keymap.set("n", "p", function()
+    require("tabber").tabulate_window(vim.api.nvim_get_current_win(), {})
+end, { noremap = true, silent = true })
+
+
 -- Window navigation
 
 vim.keymap.set("n", "<C-w>s", "Nop")

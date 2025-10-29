@@ -169,6 +169,14 @@ return {
     },
 
     {
+        "tabber",
+
+        dir = vim.fn.stdpath("config") .. "/plugins/tabber",
+
+        opts = {},
+    },
+
+    {
         "kdheepak/lazygit.nvim",
         lazy = true,
         cmd = {
