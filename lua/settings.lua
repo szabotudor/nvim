@@ -120,16 +120,16 @@ local function move_window(dir)
     local win = vim.api.nvim_get_current_win()
     local nwin = vim.fn.winnr(dir)
 
-    local nwin_type = vim.api.nvim_get_option_value("filetype", { win = nwin })
-    if nwin_type:find("NvimTree") ~= nil or nwin_type:find("TabsWindow") ~= nil then
-        return
-    end
-
     if nwin == 0 or nwin == win then
         return
     end
 
     nwin = vim.fn.win_getid(nwin)
+    local nwin_type = vim.api.nvim_get_option_value("filetype", { buf = vim.api.nvim_win_get_buf(nwin) })
+    if nwin_type:find("NvimTree") ~= nil then
+        return
+    end
+
     local cursor = vim.api.nvim_win_get_cursor(win)
     local ncursor = vim.api.nvim_win_get_cursor(nwin)
 
