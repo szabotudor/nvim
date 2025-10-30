@@ -96,7 +96,35 @@ end
 -- Tabs
 
 vim.keymap.set("n", "p", function()
-    require("tabber").tabulate_window(vim.api.nvim_get_current_win(), {})
+    require("tabber").tabulate_window(vim.api.nvim_get_current_win(), {
+        -- Switch
+        { mode = "n", map = "<C-w><Left>" },
+        { mode = "n", map = "<C-w><Right>" },
+        { mode = "n", map = "<C-w><Up>" },
+        { mode = "n", map = "<C-w><Down>" },
+
+        -- Grow
+        { mode = "n", map = "<C-w>gv" },
+        { mode = "n", map = "<C-w>gh" },
+        { mode = "n", map = "<C-w>gg" },
+
+        -- Shrink
+        { mode = "n", map = "<C-w>sv" },
+        { mode = "n", map = "<C-w>sh" },
+        { mode = "n", map = "<C-w>ss" },
+
+        -- Max
+        { mode = "n", map = "<C-w>mv" },
+        { mode = "n", map = "<C-w>mh" },
+        { mode = "n", map = "<C-w>mm" },
+
+        -- Move
+        { mode = "n", map = "<C-w><C-Up>" },
+        { mode = "n", map = "<C-w><C-Down>" },
+        { mode = "n", map = "<C-w><C-Left>" },
+        { mode = "n", map = "<C-w><C-Right>" },
+        ["quit"] = { mode = "n", map = "q" },
+    })
 end, { noremap = true, silent = true })
 
 
@@ -203,19 +231,6 @@ vim.keymap.set("n", "<C-w><C-Left>", function()
 end, { noremap = true, silent = true })
 vim.keymap.set("n", "<C-w><C-Right>", function()
     move_window("l")
-end, { noremap = true, silent = true })
-
-
--- Tab navigation
-
-vim.keymap.set("n", "<C-n>", function()
-    vim.cmd [[tabnew]]
-end, { noremap = true, silent = true })
-vim.keymap.set("n", "<Tab>", function()
-    vim.cmd [[tabnext]]
-end, { noremap = true, silent = true })
-vim.keymap.set("n", "<S-Tab>", function()
-    vim.cmd [[tabprev]]
 end, { noremap = true, silent = true })
 
 
