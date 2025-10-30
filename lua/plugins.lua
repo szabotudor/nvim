@@ -173,7 +173,9 @@ return {
 
         dir = vim.fn.stdpath("config") .. "/plugins/tabber",
 
-        opts = {},
+        opts = {
+            tabsViewHeight = 1
+        },
     },
 
     {
