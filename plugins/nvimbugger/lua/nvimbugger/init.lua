@@ -1,4 +1,8 @@
-function READ_JSON(path)
+local P = {}
+
+P.dap_tools = require("nvimbugger.dap_tools")
+
+local function read_json(path)
     local fd = vim.loop.fs_open(path, "r", 438)
     if not fd then return nil end
     local stat = vim.loop.fs_fstat(fd)
@@ -7,89 +11,7 @@ function READ_JSON(path)
     return vim.fn.json_decode(data)
 end
 
--- Copied from DAP cause they hid this away for some reason
-local dap_tools = {}
-
-function dap_tools.eval_option(option)
-    if type(option) == 'function' then
-        option = option()
-    end
-    if type(option) == "thread" then
-        assert(coroutine.status(option) == "suspended", "If option is a thread it must be suspended")
-        local co = coroutine.running()
-        -- Schedule ensures `coroutine.resume` happens _after_ coroutine.yield
-        -- This is necessary in case the option coroutine is synchronous and
-        -- gives back control immediately
-        vim.schedule(function()
-            coroutine.resume(option, co)
-        end)
-        option = coroutine.yield()
-    end
-    return option
-end
-
-dap_tools.var_placeholders = {
-    ['${file}'] = function(_)
-        return vim.fn.expand("%:p")
-    end,
-    ['${fileBasename}'] = function(_)
-        return vim.fn.expand("%:t")
-    end,
-    ['${fileBasenameNoExtension}'] = function(_)
-        return vim.fn.fnamemodify(vim.fn.expand("%:t"), ":r")
-    end,
-    ['${fileDirname}'] = function(_)
-        return vim.fn.expand("%:p:h")
-    end,
-    ['${fileExtname}'] = function(_)
-        return vim.fn.expand("%:e")
-    end,
-    ['${relativeFile}'] = function(_)
-        return vim.fn.expand("%:.")
-    end,
-    ['${relativeFileDirname}'] = function(_)
-        return vim.fn.fnamemodify(vim.fn.expand("%:.:h"), ":r")
-    end,
-    ['${workspaceFolder}'] = function(_)
-        return vim.fn.getcwd()
-    end,
-    ['${workspaceFolderBasename}'] = function(_)
-        return vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
-    end,
-    ['${env:([%w_]+)}'] = function(match)
-        return os.getenv(match) or ''
-    end,
-}
-
-
-function dap_tools.expand_config_variables(option)
-    option = dap_tools.eval_option(option)
-    if option == nil then
-        return option
-    end
-    if type(option) == "table" then
-        local mt = getmetatable(option)
-        local result = {}
-        for k, v in pairs(option) do
-            result[dap_tools.expand_config_variables(k)] = dap_tools.expand_config_variables(v)
-        end
-        return setmetatable(result, mt)
-    end
-    if type(option) ~= "string" then
-        return option
-    end
-    local ret = option
-    for key, fn in pairs(dap_tools.var_placeholders) do
-        ret = ret:gsub(key, fn)
-    end
-    return ret
-end
-
--- why
-
-function DO_DAP_RUN(dap, config)
-    local util = require("dap.utils")
-
+function P.do_dap_run(dap, config)
     local cur_win = vim.api.nvim_get_current_win()
     dap.defaults.fallback.switchbuf = function(bufnr, line, column)
         vim.api.nvim_win_set_buf(cur_win, bufnr)
@@ -98,13 +20,14 @@ function DO_DAP_RUN(dap, config)
     dap.set_log_level("DEBUG")
     local term = require("toggleterm.terminal").Terminal:new({
         cmd = "bash -c \"gdbserver :1234 " ..
-            dap_tools.expand_config_variables(config.program) ..
+            P.dap_tools.expand_config_variables(config.program) ..
             "; exec bash\"",
         direction = "horizontal",
         on_create = function(_)
+            print("Running config: " .. vim.inspect(config) .. "\n")
             dap.run(config)
         end,
-        on_stdout = function(t, job, data, name)
+        on_stdout = function(t, _, data, _)
             for _, s in ipairs(data) do
                 if s:match("host") then
                     vim.defer_fn(function()
@@ -126,7 +49,7 @@ function DO_DAP_RUN(dap, config)
     term:toggle()
 end
 
-function DAP_LAUNCH(dap)
+function P.dap_launch(dap)
     local client = vim.lsp.get_clients({ bufnr = 0 })[1]
     if not client then
         print("No lsp client detected for current buffer\n")
@@ -158,12 +81,12 @@ function DAP_LAUNCH(dap)
                 print("Invalid choice\n")
                 return
             end
-            DO_DAP_RUN(dap, item)
+            P.do_dap_run(dap, item)
         end
     )
 end
 
-function SEARCH_DEBUG_CFG()
+function P.load_launch_and_debug()
     local dap = require("dap")
 
     local session = dap.session()
@@ -176,29 +99,38 @@ function SEARCH_DEBUG_CFG()
     local cwd = vim.fn.getcwd()
     local path = cwd .. "/.nvim/launch.json"
 
-    local launch = READ_JSON(path)
+    local launch = read_json(path)
     if not launch then
         print("Couldn't read '.nvim/launch.json' in project directory\n")
         return
     end
 
     for lang, configs in pairs(launch) do
-        local type = dap.adapters.languages[lang]
-        local defaults = {
-            { "type",        type },
-            { "request",     "attach" },
-            { "args",        {} },
-            { "cwd",         cwd },
-            { "target",      "localhost:1234" },
-            { "stopAtEntry", false },
-        }
-
-        for i, config in ipairs(configs) do
-            for _, default in ipairs(defaults) do configs[i][default[1]] = config[default[1]] or default[2] end
+        for _, config in ipairs(configs) do
+            for k, default in pairs(P.languages[lang].defaults) do
+                config[k] = config[k] or default
+            end
         end
 
         dap.configurations[lang] = configs
     end
 
-    DAP_LAUNCH(dap)
+    P.dap_launch(dap)
 end
+
+function P.setup(opts)
+    local dap = require("dap")
+    P.languages = {}
+
+    for lang, config in pairs(opts) do
+        P.languages[lang] = {
+            adapter = config.adapter.name,
+            defaults = config.defaults,
+        }
+        dap.adapters[config.adapter.name] = config.adapter
+
+        P.languages[lang].defaults = config.defaults
+    end
+end
+
+return P

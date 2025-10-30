@@ -362,8 +362,7 @@ vim.keymap.set("n", "b", function()
 end, { noremap = true, silent = true })
 
 vim.keymap.set("n", "c", function()
-    SEARCH_DEBUG_CFG()
-    --    require("dap").continue()
+    require("nvimbugger").load_launch_and_debug()
 end, { noremap = true, silent = true })
 
 vim.keymap.set("n", "n", function()

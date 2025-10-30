@@ -134,27 +134,6 @@ return {
 
     {
         "mfussenegger/nvim-dap",
-
-        config = function()
-            local dap = require("dap")
-
-            dap.adapters.gdb = {
-                type = "executable",
-                command = "gdb",
-                args = { "--interpreter=dap", "--eval-command", "set print pretty on" },
-            }
-
-            dap.adapters["rust-gdb"] = {
-                type = "executable",
-                command = vim.fn.stdpath("config") .. "/lua/lspadv/rust-gdb",
-                args = { "--interpreter=dap", "--eval-command", "set print pretty on" },
-            }
-
-            dap.adapters.languages = {
-                rust = "rust-gdb",
-                c = "gdb",
-            }
-        end
     },
 
     {
@@ -163,9 +142,26 @@ return {
 
         dir = vim.fn.stdpath("config") .. "/plugins/nvimbugger",
 
-        config = function()
-            require("nvimbugger")
-        end,
+        opts = {
+            rust = {
+                adapter = {
+                    name = "rust-gdb",
+                    type = "executable",
+                    command = vim.fn.stdpath("config") .. "/lua/lspadv/rust-gdb",
+                    args = { "--interpreter=dap", "--eval-command", "set print pretty on" },
+                },
+                defaults = {
+                    type = "rust-gdb",
+                    request = "attach",
+                    args = {},
+                    cwd = function()
+                        return vim.fn.getcwd()
+                    end,
+                    target = "localhost:1234",
+                    stopAtEntry = false,
+                },
+            },
+        },
     },
 
     {
