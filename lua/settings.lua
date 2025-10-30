@@ -123,8 +123,23 @@ vim.keymap.set("n", "p", function()
         { mode = "n", map = "<C-w><C-Down>" },
         { mode = "n", map = "<C-w><C-Left>" },
         { mode = "n", map = "<C-w><C-Right>" },
+
+        {
+            mode = "n",
+            map = "`",
+            action = function()
+                vim.cmd [[ToggleTerm]]
+            end
+        },
         ["quit"] = { mode = "n", map = "q" },
     })
+end, { noremap = true, silent = true })
+
+vim.keymap.set("n", "<Tab>", function()
+    require("tabber").next_tab()
+end, { noremap = true, silent = true })
+vim.keymap.set("n", "<S-Tab>", function()
+    require("tabber").prev_tab()
 end, { noremap = true, silent = true })
 
 
