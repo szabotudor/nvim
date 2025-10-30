@@ -4,7 +4,7 @@
 ---@class TabsBufs
 ---@field empty number buffer for the dummy window
 ---@field tabs number buffer for displaying list of tabs
----@field contents table List of buffers (tabs)
+---@field contents [number] List of buffers (tabs)
 
 ---@class TabsWins
 ---@field dummy number
@@ -152,6 +152,19 @@ function P.setup_autocmds(data, intercept_keys)
         end,
     })
 
+    data.AUTOCMDS.leave_buf_autocmd = vim.api.nvim_create_autocmd("BufLeave", {
+        callback = function()
+            local cur_win = vim.api.nvim_get_current_win()
+            local cur_buf = vim.api.nvim_win_get_buf(cur_win)
+
+            local cursor = vim.api.nvim_win_get_cursor(cur_win)
+
+            vim.api.nvim_buf_set_var(cur_buf, "buf_data", {
+                cursor = cursor,
+            })
+        end
+    })
+
     data.AUTOCMDS.open_buf_autocmd = vim.api.nvim_create_autocmd("BufEnter", {
         callback = function()
             if vim.api.nvim_get_current_buf() == data.bufs.empty then
@@ -167,6 +180,12 @@ function P.setup_autocmds(data, intercept_keys)
 
             local buf_has_tabs, buf_tabs = pcall(vim.api.nvim_buf_get_var, new_buf, "tabs")
             if buf_has_tabs and buf_tabs then
+                local has_buf_data, buf_data = pcall(vim.api.nvim_buf_get_var, new_buf, "buf_data")
+                if has_buf_data then
+                    vim.api.nvim_win_set_cursor(cur_win, buf_data.cursor)
+                    vim.cmd [[normal! zz]]
+                end
+
                 P.trigger_tabs_view_redraw(data)
                 return
             end
@@ -246,8 +265,17 @@ function P.trigger_tabs_view_redraw(data)
     local highlights = {}
     for i, tab in ipairs(data.bufs.contents) do
         local start = # view[1]
-        view[1] = view[1] .. "| " .. tostring(i) .. " " .. vim.api.nvim_buf_get_name(tab) .. " "
+
+        local name = vim.api.nvim_buf_get_name(tab)
+        local cwd = vim.loop.cwd()
+        if name:sub(1, #cwd) == cwd then
+            name = name:sub(#cwd + 2)
+        end
+
+        view[1] = view[1] .. "| " .. tostring(i) .. " " .. name .. " "
+
         local stop = # view[1]
+
         highlights[#highlights + 1] = { start = start + 2, stop = stop - 1, tab = tab }
     end
     view[1] = view[1] .. "|"
@@ -266,6 +294,8 @@ function P.trigger_tabs_view_redraw(data)
         ---@diagnostic disable-next-line: deprecated
         vim.api.nvim_buf_add_highlight(data.bufs.tabs, data.ns, hl_group, line, hl.start, hl.stop)
     end
+
+    vim.api.nvim_win_set_var(data.wins.content, "tabsdata", data)
 end
 
 ---@param data TabsData
@@ -281,7 +311,6 @@ function P.close_tab(data, tab_buf)
             local switch_to = i - 1 > 0 and i - 1 or 2
             vim.api.nvim_set_current_win(data.wins.content)
             vim.api.nvim_set_current_buf(data.bufs.contents[switch_to])
-            vim.api.nvim_win_set_buf(data.wins.content, data.bufs.contents[switch_to])
 
             table.remove(data.bufs.contents, i)
             vim.api.nvim_buf_delete(tab_buf, { force = true })
@@ -290,6 +319,46 @@ function P.close_tab(data, tab_buf)
     end
 
     P.trigger_tabs_view_redraw(data)
+end
+
+function P.next_tab()
+    local has_data,
+    ---@class TabsData
+    data = pcall(vim.api.nvim_win_get_var, vim.api.nvim_get_current_win(), "tabsdata")
+
+    if not has_data then return end
+
+    local cur_buf = vim.api.nvim_win_get_buf(data.wins.content)
+
+    for i, buf in ipairs(data.bufs.contents) do
+        if buf == cur_buf then
+            if i == # data.bufs.contents then
+                vim.api.nvim_win_set_buf(data.wins.content, data.bufs.contents[1])
+            else
+                vim.api.nvim_win_set_buf(data.wins.content, data.bufs.contents[i + 1])
+            end
+        end
+    end
+end
+
+function P.prev_tab()
+    local has_data,
+    ---@class TabsData
+    data = pcall(vim.api.nvim_win_get_var, vim.api.nvim_get_current_win(), "tabsdata")
+
+    if not has_data then return end
+
+    local cur_buf = vim.api.nvim_win_get_buf(data.wins.content)
+
+    for i, buf in ipairs(data.bufs.contents) do
+        if buf == cur_buf then
+            if i == 1 then
+                vim.api.nvim_win_set_buf(data.wins.content, data.bufs.contents[#data.bufs.contents])
+            else
+                vim.api.nvim_win_set_buf(data.wins.content, data.bufs.contents[i - 1])
+            end
+        end
+    end
 end
 
 ---@param old_win number
@@ -313,6 +382,7 @@ function P.tabulate_window(old_win, intercept_keys)
     end
 
     local data = P.setup_internal_data(old_win)
+    vim.api.nvim_win_set_var(data.wins.content, "tabsdata", data)
 
     P.setup_autocmds(data, intercept_keys)
 
