@@ -25,6 +25,7 @@ function P.do_dap_run(dap, config)
         direction = "horizontal",
         on_create = function(_)
             print("Running config: " .. vim.inspect(config) .. "\n")
+            config.env = vim.fn.environ()
             dap.run(config)
         end,
         on_stdout = function(t, _, data, _)
