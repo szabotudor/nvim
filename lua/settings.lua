@@ -96,42 +96,15 @@ end
 -- Tabs
 
 vim.keymap.set("n", "p", function()
-    require("tabber").tabulate_window(vim.api.nvim_get_current_win(), {
-        -- Switch
-        { mode = "n", map = "<C-w><Left>" },
-        { mode = "n", map = "<C-w><Right>" },
-        { mode = "n", map = "<C-w><Up>" },
-        { mode = "n", map = "<C-w><Down>" },
-
-        -- Grow
-        { mode = "n", map = "<C-w>gv" },
-        { mode = "n", map = "<C-w>gh" },
-        { mode = "n", map = "<C-w>gg" },
-
-        -- Shrink
-        { mode = "n", map = "<C-w>sv" },
-        { mode = "n", map = "<C-w>sh" },
-        { mode = "n", map = "<C-w>ss" },
-
-        -- Max
-        { mode = "n", map = "<C-w>mv" },
-        { mode = "n", map = "<C-w>mh" },
-        { mode = "n", map = "<C-w>mm" },
-
-        -- Move
-        { mode = "n", map = "<C-w><C-Up>" },
-        { mode = "n", map = "<C-w><C-Down>" },
-        { mode = "n", map = "<C-w><C-Left>" },
-        { mode = "n", map = "<C-w><C-Right>" },
-
-        {
+    local tabber = require("tabber")
+    tabber.tabulate_window(vim.api.nvim_get_current_win(), {
+        quit = {
             mode = "n",
-            map = "`",
+            map = "q",
             action = function()
-                vim.cmd [[ToggleTerm]]
+                tabber.close_tab()
             end
         },
-        ["quit"] = { mode = "n", map = "q" },
     })
 end, { noremap = true, silent = true })
 
