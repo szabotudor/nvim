@@ -133,6 +133,12 @@ return {
     },
 
     {
+        "saecki/crates.nvim",
+        tag = "stable",
+        config = true,
+    },
+
+    {
         "mfussenegger/nvim-dap",
     },
 
