@@ -269,24 +269,28 @@ vim.keymap.set("n", ".", function()
 
         local str_diags = {}
         local max_diag_len = 0
+        related_diagnostic_uri = {}
+
         for _, d in ipairs(diags) do
             if d.user_data and d.user_data.lsp and d.user_data.lsp.relatedInformation then
                 for _, ri in ipairs(d.user_data.lsp.relatedInformation) do
                     if string.find(string.lower(ri.message), "original", 1, true) then
-                        related_diagnostic_uri = {
+                        local uri_info = {
                             uri = vim.uri_to_fname(ri.location.uri),
                             line = ri.location.range.start.line + 1,
                             column = ri.location.range.start.character
                         }
                         local diag = ri.message ..
                             ": '" ..
-                            related_diagnostic_uri.uri ..
-                            ':' .. related_diagnostic_uri.line ..
-                            ':' .. related_diagnostic_uri.column .. "'"
+                            uri_info.uri ..
+                            ':' .. uri_info.line ..
+                            ':' .. uri_info.column .. "'"
                         str_diags[#str_diags + 1] = diag
                         if #diag > max_diag_len then
                             max_diag_len = #diag
                         end
+
+                        related_diagnostic_uri[#related_diagnostic_uri + 1] = uri_info
                     end
                 end
             end
@@ -296,7 +300,7 @@ vim.keymap.set("n", ".", function()
             return
         end
 
-        str_diags[#str_diags + 1] = "Press ',' to go to original diagnostic"
+        str_diags[#str_diags + 1] = "Press ',' to follow diagnostic(s)"
 
         local buf = vim.api.nvim_create_buf(false, true)
         vim.api.nvim_buf_set_lines(buf, 0, -1, false, str_diags)
@@ -448,8 +452,29 @@ function ON_ATTACH(client, buffnr)
 
     vim.keymap.set("n", ",", function()
         if related_diagnostic_uri then
-            vim.cmd("e " .. related_diagnostic_uri.uri)
-            vim.api.nvim_win_set_cursor(0, { related_diagnostic_uri.line, related_diagnostic_uri.column })
+            if #related_diagnostic_uri == 1 then
+                vim.cmd("e " .. related_diagnostic_uri[1].uri)
+                vim.api.nvim_win_set_cursor(0, { related_diagnostic_uri[1].line, related_diagnostic_uri[1].column })
+            else
+                local uris = {}
+                for i, uri in ipairs(related_diagnostic_uri) do
+                    uris[i] = uri.uri .. ":" .. uri.line .. ":" .. uri.column
+                end
+                vim.ui.select(
+                    uris,
+                    {
+                        prompt = "Which diagnostic would you like to follow",
+                        kind = "number",
+                    },
+                    function(_, i)
+                        vim.cmd("e " .. related_diagnostic_uri[i].uri)
+                        vim.api.nvim_win_set_cursor(0, {
+                            related_diagnostic_uri[i].line,
+                            related_diagnostic_uri[i].column
+                        })
+                    end
+                )
+            end
         else
             telescope.lsp_references({
                 include_current_line = true,
