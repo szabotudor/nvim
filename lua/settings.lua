@@ -455,7 +455,7 @@ function ON_ATTACH(client, buffnr)
             if #related_diagnostic_uri == 1 then
                 vim.cmd("e " .. related_diagnostic_uri[1].uri)
                 vim.api.nvim_win_set_cursor(0, { related_diagnostic_uri[1].line, related_diagnostic_uri[1].column })
-            else
+            elseif #related_diagnostic_uri ~= 0 then
                 local uris = {}
                 for i, uri in ipairs(related_diagnostic_uri) do
                     uris[i] = uri.uri .. ":" .. uri.line .. ":" .. uri.column
