@@ -201,18 +201,31 @@ end, { noremap = true, silent = true })
 
 -- Session
 
-local session_dir = vim.fn.getcwd() .. "/.nvim/session0"
-if not (vim.loop or vim.uv).fs_stat(session_dir) then
-    vim.cmd("!mkdir -p " .. session_dir)
+local function ensure_session()
+    local session_dir = vim.fn.getcwd() .. "/.nvim/session0"
+    if not (vim.loop or vim.uv).fs_stat(session_dir) then
+        vim.fn.system({ "mkdir", "-p ", session_dir })
+    end
+    return session_dir
 end
 
 for i = 0, 9 do
     local si = tostring(i)
     vim.keymap.set("n", si .. "s", function()
-        vim.cmd("mks " .. session_dir .. "/tab" .. si)
+        local session_dir = ensure_session()
+        vim.cmd [[NvimTreeClose]]
+        vim.cmd("mks! " .. session_dir .. "/tab" .. si)
     end)
     vim.keymap.set("n", si .. "o", function()
+        local session_dir = ensure_session()
         vim.cmd("source " .. session_dir .. "/tab" .. si)
+        vim.cmd [[NvimTreeOpen]]
+    end)
+    vim.keymap.set("n", si .. "q", function()
+        vim.cmd [[NvimTreeClose]]
+        local session_dir = ensure_session()
+        vim.cmd("mks! " .. session_dir .. "/tab" .. si)
+        vim.cmd [[qa!]]
     end)
 end
 
