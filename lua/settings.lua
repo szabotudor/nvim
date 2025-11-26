@@ -199,6 +199,24 @@ vim.keymap.set("n", "<C-w><C-Right>", function()
 end, { noremap = true, silent = true })
 
 
+-- Session
+
+local session_dir = vim.fn.getcwd() .. "/.nvim/session0"
+if not (vim.loop or vim.uv).fs_stat(session_dir) then
+    vim.cmd("!mkdir -p " .. session_dir)
+end
+
+for i = 0, 9 do
+    local si = tostring(i)
+    vim.keymap.set("n", si .. "s", function()
+        vim.cmd("mks " .. session_dir .. "/tab" .. si)
+    end)
+    vim.keymap.set("n", si .. "o", function()
+        vim.cmd("source " .. session_dir .. "/tab" .. si)
+    end)
+end
+
+
 -- Tab navigation
 
 vim.keymap.set("n", "<C-n>", function()
@@ -399,6 +417,13 @@ function ON_ATTACH_NVIM_TREE(bufnr)
     local function opts(desc)
         return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
     end
+
+    vim.api.nvim_create_autocmd("BufEnter", {
+        buffer = bufnr,
+        callback = function()
+            vim.cmd [[NvimTreeRefresh]]
+        end
+    })
 
     vim.keymap.set("n", "<CR>", api.node.open.edit, opts("Open selection"))
     vim.keymap.set("n", "o", api.node.open.vertical, opts("Open selection in a new vertical window"))
