@@ -450,6 +450,9 @@ function ON_ATTACH(client, buffnr)
         })
     end
 
+    vim.keymap.set("n", ";", vim.lsp.buf.declaration)
+    vim.keymap.set("n", "'", vim.lsp.buf.definition)
+
     vim.keymap.set("n", ",", function()
         if related_diagnostic_uri then
             if #related_diagnostic_uri == 1 then
