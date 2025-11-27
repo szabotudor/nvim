@@ -77,6 +77,9 @@ return {
                 show_start = false,
                 highlight = { "Function", "Label" },
             },
+            indent = {
+                char = { "･" },
+            },
         },
 
         config = function(_, opts)
