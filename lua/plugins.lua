@@ -2,11 +2,22 @@ return {
     {
         "iamcco/markdown-preview.nvim",
         cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-        build = "cd app && yarn install",
-        init = function()
-            vim.g.mkdp_filetypes = { "markdown" }
-        end,
         ft = { "markdown" },
+        build = function()
+            local dir = vim.fn.expand("~/.local/share/nvim/lazy/markdown-preview.nvim/app/")
+            -- Change directory and run install.sh
+            vim.fn.jobstart({ "sh", "./install.sh" }, {
+                cwd = dir,
+                stdout_buffered = true,
+                stderr_buffered = true,
+                on_stdout = function(_, data)
+                    if data then print(table.concat(data, "\n")) end
+                end,
+                on_stderr = function(_, data)
+                    if data then print(table.concat(data, "\n")) end
+                end,
+            })
+        end,
     },
 
     {
