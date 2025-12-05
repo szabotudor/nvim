@@ -89,6 +89,10 @@ return {
             cmd[#cmd + 1] = '--config-path'
             cmd[#cmd + 1] = cargo_crate_dir .. '/.nvim/rust_analyzer.toml'
         end
+        if (vim.loop or vim.uv).fs_stat(cargo_crate_dir .. '/.nvim/rust-analyzer.toml') then
+            cmd[#cmd + 1] = '--config-path'
+            cmd[#cmd + 1] = cargo_crate_dir .. '/.nvim/rust-analyzer.toml'
+        end
 
         vim.system(cmd, { text = true }, function(output)
             if output.code == 0 then
@@ -103,7 +107,7 @@ return {
             else
                 vim.schedule(function()
                     vim.notify(('[rust_analyzer] cmd failed with code %d: %s\n%s'):format(output.code, cmd, output
-                    .stderr))
+                        .stderr))
                 end)
             end
         end)
