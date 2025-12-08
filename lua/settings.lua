@@ -60,6 +60,10 @@ vim.keymap.set({ "n" }, "Q", function()
     end
 end, { noremap = true, silent = true })
 
+vim.keymap.set("n", "<C-q>", function()
+    vim.cmd [[tabclose]]
+end)
+
 
 -- Saving
 
