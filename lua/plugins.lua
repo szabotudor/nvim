@@ -108,7 +108,7 @@ return {
         opts = {
             cursorline = {
                 enable = true,
-                timeout = 0,
+                timeout = 80,
                 number = false,
             },
             cursorword = {
