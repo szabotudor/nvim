@@ -7,6 +7,13 @@ vim.opt.number = true
 
 -- KEYMAP
 
+
+-- Cleanup
+
+vim.keymap.set("n", "<C-d>", "<Nop>")
+vim.keymap.set("n", "<C-u>", "<Nop>")
+
+
 -- Deleting
 vim.keymap.set({ "n", "v" }, "<S-d>", "<Nop>", { noremap = true, silent = true })
 vim.keymap.set({ "n", "v" }, "<Del>", "d", { noremap = true, silent = true })
