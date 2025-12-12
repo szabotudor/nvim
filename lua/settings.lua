@@ -215,7 +215,7 @@ end, { noremap = true, silent = true })
 local function ensure_session()
     local session_dir = vim.fn.getcwd() .. "/.nvim/session0"
     if not (vim.loop or vim.uv).fs_stat(session_dir) then
-        vim.fn.system({ "mkdir", "-p ", session_dir })
+        vim.fn.system({ "mkdir", "-p", session_dir })
         print("Created local directory '" .. session_dir .. "'")
     end
     return session_dir
