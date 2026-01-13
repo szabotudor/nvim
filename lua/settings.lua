@@ -434,18 +434,6 @@ vim.keymap.set("t", "<C-e>", "<C-\\><C-n>", { noremap = true, silent = true })
 
 vim.keymap.set("n", "h", function() require("hex").toggle() end, { noremap = true, silent = true })
 
-vim.o.foldcolumn = '0'
-vim.o.foldlevel = 99
-vim.o.foldlevelstart = 99
-vim.o.foldenable = true
-
-vim.keymap.set("n", "z<S-m>", "<Nop>")
-vim.keymap.set("n", "z<S-r>", "<Nop>")
-vim.keymap.set("n", "z<S-c>", require('ufo').closeAllFolds)
-vim.keymap.set("n", "z<S-o>", require('ufo').openAllFolds)
-vim.keymap.set("n", "<S-z><S-c>", require('ufo').closeAllFolds)
-vim.keymap.set("n", "<S-z><S-o>", require('ufo').openAllFolds)
-
 
 -- File Browser
 
