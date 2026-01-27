@@ -33,6 +33,58 @@ vim.keymap.set("n", "<S-v>", "<S-v>", { noremap = true, silent = true })
 vim.keymap.set("n", "<S-v><S-v>", "<C-v>", { noremap = true, silent = true })
 vim.keymap.set("n", "<S-v>v", "<C-v>", { noremap = true, silent = true })
 
+local function insert_sym(sym, end_sym)
+    if vim.fn.visualmode() ~= "v" then
+        return
+    end
+
+    vim.api.nvim_feedkeys(
+        vim.api.nvim_replace_termcodes("<Esc>", true, false, true),
+        "n",
+        false
+    )
+
+    vim.schedule(function()
+        local bufnr = 0
+        local start_pos = vim.fn.getpos("'<")
+        local end_pos = vim.fn.getpos("'>")
+
+        vim.api.nvim_buf_set_text(
+            bufnr,
+            end_pos[2] - 1,
+            end_pos[3],
+            end_pos[2] - 1,
+            end_pos[3],
+            { end_sym }
+        )
+
+        vim.api.nvim_buf_set_text(
+            bufnr,
+            start_pos[2] - 1,
+            start_pos[3] - 1,
+            start_pos[2] - 1,
+            start_pos[3] - 1,
+            { sym }
+        )
+    end)
+end
+
+vim.keymap.set("v", "(", function()
+    insert_sym("(", ")")
+end, { silent = true, noremap = true })
+
+vim.keymap.set("v", "[", function()
+    insert_sym("[", "]")
+end, { silent = true, noremap = true })
+
+vim.keymap.set("v", "[[", function()
+    insert_sym("[", "]")
+end, { silent = true, noremap = true })
+
+vim.keymap.set("v", "{", function()
+    insert_sym("{", "}")
+end, { silent = true, noremap = true })
+
 -- Undo/redo
 vim.keymap.set({ "n", "i", "s" }, "<C-z>", function() vim.cmd("undo") end, { noremap = true, silent = true })
 vim.keymap.set({ "n", "i", "s" }, "<C-y>", function() vim.cmd("redo") end, { noremap = true, silent = true })
