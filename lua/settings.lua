@@ -543,6 +543,20 @@ end
 
 -- Telescope
 
+vim.keymap.set("n", '"', function()
+    local word = vim.fn.expand("<cword>")
+    if word == "" then
+        return
+    end
+
+    -- Very nomagic, word boundaries, escaped
+    local pattern = "\\V\\<" .. vim.fn.escape(word, "\\") .. "\\>"
+
+    -- Set search register and enable hlsearch
+    vim.fn.setreg("/", pattern)
+    vim.o.hlsearch = true
+end, { silent = true })
+
 vim.keymap.set("n", "f", function()
     vim.cmd("Telescope current_buffer_fuzzy_find")
 end, { noremap = true, silent = true, desc = "Search in current file" })
