@@ -93,6 +93,8 @@ vim.keymap.set({ "n", "i", "s" }, "<C-r>", function() vim.cmd("redo") end, { nor
 -- Copy/cut in normal and visual mode
 vim.keymap.set({ "n", "v" }, "<C-c>", '"+y', { noremap = true, silent = true })
 vim.keymap.set({ "n", "v" }, "<C-x>", '"+d', { noremap = true, silent = true })
+vim.keymap.set("n", "<C-d>", "<S-v><C-c><C-v>s", { remap = true, silent = true })
+vim.keymap.set("v", "<C-d>", "<C-c><C-v>", { remap = true, silent = true })
 
 -- Paste in insert mode
 vim.keymap.set({ "i" }, "<C-v>", function()
