@@ -597,6 +597,11 @@ end
 
 -- Telescope
 
+vim.keymap.set("n", "<Esc>", function()
+    vim.o.hlsearch = false
+    vim.fn.setreg("/", "")
+end, { silent = true })
+
 vim.keymap.set("n", '"', function()
     local word = vim.fn.expand("<cword>")
     if word == "" then
@@ -610,15 +615,54 @@ vim.keymap.set("n", '"', function()
     vim.fn.setreg("/", pattern)
     vim.o.hlsearch = true
 end, { silent = true })
+-- Same but for visual mode
+vim.keymap.set("v", '"', function()
+    -- Yank selection into register 's'
+    vim.cmd('normal! "sy')
+    local sel = vim.fn.getreg("s")
+    if sel == "" then
+        return
+    end
+    -- Very nomagic, escaped (no word boundaries for visual selection)
+    local pattern = "\\V" .. vim.fn.escape(sel, "\\")
+    vim.fn.setreg("/", pattern)
+    vim.o.hlsearch = true
+end, { silent = true })
+
+vim.keymap.set("n", "//", "gcc", { silent = true, remap = true })
+vim.keymap.set("v", "//", "gc", { silent = true, remap = true })
 
 vim.keymap.set("n", "f", function()
-    vim.cmd("Telescope current_buffer_fuzzy_find")
+    local search = vim.fn.getreg("/")
+
+    -- Strip very-nomagic prefix and word boundaries added by your " mapping
+    search = search:gsub("^\\V", ""):gsub("^\\<", ""):gsub("\\>$", "")
+
+    require("telescope.builtin").current_buffer_fuzzy_find({
+        default_text = vim.o.hlsearch and search or "",
+    })
 end, { noremap = true, silent = true, desc = "Search in current file" })
+
 vim.keymap.set("n", "<C-f>", function()
-    vim.cmd("Telescope live_grep")
+    local search = vim.fn.getreg("/")
+
+    -- Strip very-nomagic prefix and word boundaries added by your " mapping
+    search = search:gsub("^\\V", ""):gsub("^\\<", ""):gsub("\\>$", "")
+
+    require("telescope.builtin").live_grep({
+        default_text = vim.o.hlsearch and search or "",
+    })
 end, { noremap = true, silent = true, desc = "Search text in project" })
+
 vim.keymap.set("n", "<S-f>", function()
-    vim.cmd("Telescope find_files")
+    local search = vim.fn.getreg("/")
+
+    -- Strip very-nomagic prefix and word boundaries added by your " mapping
+    search = search:gsub("^\\V", ""):gsub("^\\<", ""):gsub("\\>$", "")
+
+    require("telescope.builtin").find_files({
+        default_text = vim.o.hlsearch and search or "",
+    })
 end, { noremap = true, silent = true, desc = "Search files in cwd" })
 
 local function custom_dir_live_grep()
@@ -629,8 +673,15 @@ local function custom_dir_live_grep()
     if folder == nil or folder == "" then
         return
     end
+
+    local search = vim.fn.getreg("/")
+
+    -- Strip very-nomagic prefix and word boundaries added by your " mapping
+    search = search:gsub("^\\V", ""):gsub("^\\<", ""):gsub("\\>$", "")
+
     require("telescope.builtin").live_grep({
-        cwd = folder
+        cwd = folder,
+        default_text = vim.o.hlsearch and search or "",
     })
 end
 
