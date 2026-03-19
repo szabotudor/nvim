@@ -688,6 +688,18 @@ end
 vim.keymap.set("n", "<C-f><C-f>", custom_dir_live_grep, { noremap = true, silent = true })
 vim.keymap.set("n", "<C-f>f", custom_dir_live_grep, { noremap = true, silent = true })
 
+local function custom_replace_all()
+    local search = vim.fn.getreg("/")
+    if search == "" then return end
+    local stripped = search:gsub("^\\V", ""):gsub("^\\<", ""):gsub("\\>$", "")
+    vim.api.nvim_feedkeys(
+        vim.api.nvim_replace_termcodes(":%s/" .. search .. "/" .. stripped .. "/gc<Left><Left><Left>", true, false, true),
+        "n", false
+    )
+end
+
+vim.keymap.set("n", "<C-r>", custom_replace_all, { silent = false, desc = "Replace all occurrences" })
+
 
 -- Projects
 
