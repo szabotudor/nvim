@@ -601,6 +601,9 @@ vim.keymap.set("n", "<Esc>", function()
     vim.o.hlsearch = false
     vim.fn.setreg("/", "")
 end, { silent = true })
+-- Clear reg when nvim starts
+vim.o.hlsearch = false
+vim.fn.setreg("/", "")
 
 vim.keymap.set("n", '"', function()
     local word = vim.fn.expand("<cword>")
