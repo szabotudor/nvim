@@ -144,6 +144,11 @@ vim.keymap.set({ "n", "v" }, "s", "j", { noremap = true, silent = true })
 vim.keymap.set({ "n", "v" }, "a", "h", { noremap = true, silent = true })
 vim.keymap.set({ "n", "v" }, "d", "l", { noremap = true, silent = true })
 
+vim.keymap.set({ "n", "v" }, "<S-w>", "10k", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "<S-s>", "10j", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "<S-a>", "10h", { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "<S-d>", "10l", { noremap = true, silent = true })
+
 local move10 = {
     ["<S-Up>"] = "10k",
     ["<S-Down>"] = "10j",
