@@ -543,7 +543,7 @@ function ON_ATTACH(client, buffnr)
     local opts = { buffer = buffnr, silent = true, noremap = true }
     local telescope = require("telescope.builtin")
 
-    if client.supports_method("textDocument/formatting") then
+    if client:supports_method("textDocument/formatting") then
         vim.api.nvim_create_autocmd("BufWritePre", {
             buffer = buffnr,
             callback = function()
