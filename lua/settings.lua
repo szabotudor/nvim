@@ -706,7 +706,11 @@ local function custom_replace_all()
     )
 end
 
-vim.keymap.set("n", "<C-h>", custom_replace_all, { silent = false, desc = "Replace all occurrences" })
+vim.keymap.set("n", "<C-h>", custom_replace_all, { noremap = true, silent = false, desc = "Replace all occurrences" })
+vim.keymap.set("v", "<C-h>", function()
+    vim.api.nvim_feedkeys('"', 'n', false)
+    custom_replace_all()
+end, { noremap = true, silent = false, desc = "Replace all occurrences" })
 
 
 -- Projects
