@@ -1,5 +1,11 @@
 local DEFAULT_CONFIG = {
-    auto_format = true
+    format = {
+        tab = {
+            use_spaces = true,
+            size = 4,
+        },
+        auto_format = true,
+    }
 }
 
 -- Read configuration from file
@@ -53,13 +59,16 @@ function ConfigWrite(config)
     end
 
     -- Serialize to JSON with pretty printing
-    local json_content = vim.json.encode(config)
+    local json_content = vim.json.encode(config, { indent = config.format.tab.use_spaces and "    " or "        " })
 
     -- Pretty print manually (vim.json.encode doesn't have pretty option)
-    local pretty_json = json_content:gsub(",", ",\n  "):gsub("{", "{\n  "):gsub("}", "\n}")
+    -- local pretty_json = json_content:gsub(",", ",\n  "):gsub("{", "{\n  "):gsub("}", "\n}")
 
-    file:write(pretty_json)
+    file:write(json_content)
     file:write("\n")
     file:close()
     return true
 end
+
+-- Ensure config exists
+local _ = ConfigRead()
