@@ -5,6 +5,9 @@ vim.opt.shiftwidth = 4
 vim.opt.number = true
 
 
+require("cfg_file")
+
+
 -- KEYMAP
 
 
@@ -547,14 +550,19 @@ function ON_ATTACH(client, buffnr)
         vim.api.nvim_create_autocmd("BufWritePre", {
             buffer = buffnr,
             callback = function()
-                vim.lsp.buf.format({
-                    bufnr = buffnr,
-                    formatting_options = {
-                        insertFinalNewline = true,
-                        trimFinalNewlines = true,
-                        trimTrailingWhitespace = true,
-                    },
-                })
+                local cfg = ConfigRead()
+                if cfg.auto_format then
+                    vim.lsp.buf.format({
+                        bufnr = buffnr,
+                        formatting_options = {
+                            insertFinalNewline = true,
+                            trimFinalNewlines = true,
+                            trimTrailingWhitespace = true,
+                            insertSpaces = true,
+                            tabSize = 4,
+                        },
+                    })
+                end
             end,
         })
     end
