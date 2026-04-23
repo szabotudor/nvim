@@ -64,7 +64,7 @@ return {
 
         opts = {
             indent = { enable = true },
-            ensure_installed = { "lua", "rust", "python", "cpp", "markdown" },
+            ensure_installed = { "lua", "rust", "python", "cpp", "markdown", "html" },
             highlight = { enable = true },
         },
     },
