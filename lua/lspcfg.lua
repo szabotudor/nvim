@@ -63,6 +63,7 @@ addlsp("rust_analyzer", "rust", true)
 addlsp("clangd", "c")
 addlsp("bashls", "bash", false)
 addlsp("pyright", "python")
+addlsp("html", "html")
 
 vim.lsp.handlers["textDocument/semanticTokens/full"] = vim.lsp.semantic_tokens.on_full
 vim.lsp.handlers["textDocument/semanticTokens/range"] = vim.lsp.semantic_tokens.on_range
