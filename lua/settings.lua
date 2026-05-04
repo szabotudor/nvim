@@ -551,7 +551,7 @@ function ON_ATTACH(client, buffnr)
             buffer = buffnr,
             callback = function()
                 local cfg = ConfigRead()
-                if cfg.auto_format then
+                if cfg.format.auto_format then
                     vim.lsp.buf.format({
                         bufnr = buffnr,
                         formatting_options = {
