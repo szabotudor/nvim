@@ -56,7 +56,6 @@ return {
 
     {
         "nvim-treesitter/nvim-treesitter",
-        tag = "v0.10.0",
 
         branch = "main",
         lazy = false,
@@ -67,6 +66,10 @@ return {
             ensure_installed = { "lua", "rust", "python", "cpp", "markdown", "html" },
             highlight = { enable = true },
         },
+
+        config = function(_, opts)
+            require("nvim-treesitter.configs").setup(opts)
+        end
     },
 
     {
