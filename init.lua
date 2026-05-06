@@ -1,3 +1,8 @@
+vim.opt.termguicolors = true
+vim.g.nightflyCursorColor = true
+vim.g.nightflyNormalPmenu = true
+vim.g.nightflyNormalFloat = true
+
 require("settings")
 
 require("lazy-nvim")
@@ -5,9 +10,6 @@ require("lazy-nvim")
 require("lspcfg")
 
 vim.cmd [[colorscheme nightfly]]
-vim.g.nifghtflyCursorColor = true
-vim.g.nightflyNormalPmenu = true
-vim.g.nightflyNormalFloat = true
 vim.o.winborder = "single"
 vim.opt.fillchars = {
     horiz = '━',
