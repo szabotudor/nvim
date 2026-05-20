@@ -332,7 +332,10 @@ local latent_edit = nil
 
 vim.keymap.set("n", "<CR>", function()
     if latent_edit then
-        vim.cmd("edit " .. latent_edit)
+        vim.cmd("edit " .. latent_edit.file)
+        if latent_edit.line then
+            vim.api.nvim_win_set_cursor(0, { latent_edit.line, latent_edit.col or 0 })
+        end
         latent_edit = nil
         return
     end
@@ -341,11 +344,37 @@ vim.keymap.set("n", "<CR>", function()
     if url == "" then
         return
     elseif vim.fn.filereadable(url) == 1 then
-        print("Press <CR> to edit '" .. url)
+        local jump_line, jump_col
+        local line_text = vim.api.nvim_get_current_line()
+        local col = vim.api.nvim_win_get_cursor(0)[2] + 1
+        local search_start = math.max(1, col - #url)
+        local url_pos = string.find(line_text, url, search_start, true)
+        if url_pos then
+            local suffix = string.sub(line_text, url_pos + #url)
+            local l, c = string.match(suffix, "^:(%d+):(%d+)")
+            if l then
+                jump_line = tonumber(l)
+                jump_col = tonumber(c) - 1
+            else
+                l = string.match(suffix, "^:(%d+)")
+                if l then
+                    jump_line = tonumber(l)
+                    jump_col = 0
+                end
+            end
+        end
+        local location_str = url
+        if jump_line then
+            location_str = url .. ":" .. jump_line
+            if jump_col then
+                location_str = location_str .. ":" .. (jump_col + 1)
+            end
+        end
+        print("Press <CR> to edit '" .. location_str .. "'")
         local answer = vim.fn.getchar() == 13
         if answer then
             print("Navigate to the window you would like to edit in and press <CR> to edit in that window")
-            latent_edit = url
+            latent_edit = { file = url, line = jump_line, col = jump_col }
         end
     else
         print("Press <CR> to open '" .. url .. "' in browser?")
