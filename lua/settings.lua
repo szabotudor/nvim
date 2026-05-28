@@ -534,9 +534,13 @@ function ON_ATTACH_NVIM_TREE(bufnr)
         return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
     end
 
-    local callback = function()
+    local function callback()
         vim.cmd [[NvimTreeRefresh]]
         vim.defer_fn(function()
+            if not vim.api.nvim_buf_is_valid(bufnr) then
+                return
+            end
+
             local lines = vim.api.nvim_buf_get_lines(bufnr, 1, -1, false)
             local max_width = 0
             for _, line in ipairs(lines) do
@@ -547,7 +551,9 @@ function ON_ATTACH_NVIM_TREE(bufnr)
             if win ~= -1 then
                 local info = vim.fn.getwininfo(win)
                 local textoff = (info and info[1]) and info[1].textoff or 0
-                vim.api.nvim_win_set_width(win, max_width + textoff + 1)
+                if info[1].width < max_width + textoff + 1 then
+                    vim.api.nvim_win_set_width(win, max_width + textoff + 1)
+                end
             end
         end, 50)
     end
@@ -561,16 +567,31 @@ function ON_ATTACH_NVIM_TREE(bufnr)
         callback = callback,
     })
 
-    vim.keymap.set("n", "<CR>", api.node.open.edit, opts("Open selection"))
+    vim.keymap.set("n", "<CR>", function()
+        api.node.open.edit()
+        callback()
+    end, opts("Open selection"))
     vim.keymap.set("n", "o", api.node.open.vertical, opts("Open selection in a new vertical window"))
     vim.keymap.set("n", "ov", api.node.open.vertical, opts("Open selection in a new vertical window"))
     vim.keymap.set("n", "oh", api.node.open.horizontal, opts("Open selection in a new vertical window"))
-    vim.keymap.set("n", "<BS>", api.tree.change_root_to_node, opts("Open selection"))
+    vim.keymap.set("n", "<BS>", function()
+        api.tree.change_root_to_node()
+        callback()
+    end, opts("Open selection"))
 
-    vim.keymap.set("n", "n", api.fs.create, opts("Create file/directory"))
+    vim.keymap.set("n", "n", function()
+        api.fs.create()
+        callback()
+    end, opts("Create file/directory"))
 
-    vim.keymap.set("n", "<Del>", api.fs.trash, opts("Move selection to trash"))
-    vim.keymap.set("n", "<S-Del>", api.fs.remove, opts("Permanently delete selection"))
+    vim.keymap.set("n", "<Del>", function()
+        api.fs.trash()
+        callback()
+    end, opts("Move selection to trash"))
+    vim.keymap.set("n", "<S-Del>", function()
+        api.fs.remove()
+        callback()
+    end, opts("Permanently delete selection"))
 
     vim.keymap.set("n", "f", function()
         vim.cmd("Telescope find_files")
@@ -578,9 +599,15 @@ function ON_ATTACH_NVIM_TREE(bufnr)
 
     vim.keymap.set("n", "c", api.fs.copy.node, opts("Copy selection"))
     vim.keymap.set("n", "x", api.fs.cut, opts("Cut selection"))
-    vim.keymap.set("n", "v", api.fs.paste, opts("Paste copy/cut buffer"))
+    vim.keymap.set("n", "v", function()
+        api.fs.paste()
+        callback()
+    end, opts("Paste copy/cut buffer"))
 
-    vim.keymap.set("n", "r", api.fs.rename, opts("Rename selection"))
+    vim.keymap.set("n", "r", function()
+        api.fs.rename()
+        callback()
+    end, opts("Rename selection"))
     vim.keymap.set("n", "R", function() vim.cmd [[NvimTreeRefresh]] end, opts("Refresh"))
 
     vim.keymap.set("n", "t", function() vim.cmd [[NvimTreeToggle]] end)
