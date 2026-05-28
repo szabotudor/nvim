@@ -184,12 +184,11 @@ return {
                     args = { "--interpreter=dap", "--eval-command", "set print pretty on" },
                 },
                 defaults = {
+                    name = "Debug",
                     type = "rust-gdb",
-                    request = "attach",
+                    request = "launch",
                     args = {},
-                    cwd = function()
-                        return vim.fn.getcwd()
-                    end,
+                    cwd = vim.fn.getcwd(),
                     target = "localhost:1234",
                     stopAtEntry = false,
                 },

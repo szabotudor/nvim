@@ -6,9 +6,15 @@ local function read_json(path)
     local fd = vim.loop.fs_open(path, "r", 438)
     if not fd then return nil end
     local stat = vim.loop.fs_fstat(fd)
+    if not stat then return nil end
     local data = vim.loop.fs_read(fd, stat.size, 0)
     vim.loop.fs_close(fd)
     return vim.fn.json_decode(data)
+end
+
+local function write_file(path, content)
+    vim.fn.mkdir(vim.fn.fnamemodify(path, ":h"), "p")
+    vim.fn.writefile(vim.split(content, "\n"), path)
 end
 
 function P.do_dap_run(dap, config)
@@ -87,6 +93,16 @@ function P.dap_launch(dap)
     )
 end
 
+function P.generate_default_launch_json(path)
+    local defaults = {}
+    for lang, info in pairs(P.languages) do
+        defaults[lang] = {}
+        defaults[lang][1] = info.defaults
+    end
+
+    write_file(path, vim.json.encode(defaults, { indent = "    " }))
+end
+
 function P.load_launch_and_debug()
     local dap = require("dap")
 
@@ -102,7 +118,8 @@ function P.load_launch_and_debug()
 
     local launch = read_json(path)
     if not launch then
-        print("Couldn't read '.nvim/launch.json' in project directory\n")
+        P.generate_default_launch_json(path)
+        print("Generated default '.nvim/launch.json' — edit it to match your project, then rerun.\n")
         return
     end
 
