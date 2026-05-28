@@ -584,6 +584,8 @@ function ON_ATTACH_NVIM_TREE(bufnr)
     vim.keymap.set("n", "R", function() vim.cmd [[NvimTreeRefresh]] end, opts("Refresh"))
 
     vim.keymap.set("n", "t", function() vim.cmd [[NvimTreeToggle]] end)
+
+    vim.keymap.set("n", "<2-LeftMouse>", api.node.open.edit, opts("Open on double click"))
 end
 
 vim.keymap.set("n", "t", function() vim.cmd [[NvimTreeToggle]] end)
