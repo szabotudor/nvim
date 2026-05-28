@@ -63,7 +63,7 @@ function P.dap_launch(dap)
         return
     end
 
-    local language = languages[client.name]
+    local language = P.languages[client.name]
     if not language then
         print("Unrecognized lsp client " .. client.name .. "\n")
         return
@@ -71,7 +71,7 @@ function P.dap_launch(dap)
 
     local configs = dap.configurations[language]
     if not configs then
-        print("Language " .. language " not supported by debugger\n")
+        print("Language " .. language .. " not supported by debugger\n")
         return
     end
 
