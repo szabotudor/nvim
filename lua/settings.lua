@@ -534,11 +534,31 @@ function ON_ATTACH_NVIM_TREE(bufnr)
         return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
     end
 
-    vim.api.nvim_create_autocmd("BufEnter", {
+    local callback = function()
+        vim.cmd [[NvimTreeRefresh]]
+        vim.defer_fn(function()
+            local lines = vim.api.nvim_buf_get_lines(bufnr, 1, -1, false)
+            local max_width = 0
+            for _, line in ipairs(lines) do
+                local w = vim.fn.strdisplaywidth(line)
+                if w > max_width then max_width = w end
+            end
+            local win = vim.fn.bufwinid(bufnr)
+            if win ~= -1 then
+                local info = vim.fn.getwininfo(win)
+                local textoff = (info and info[1]) and info[1].textoff or 0
+                vim.api.nvim_win_set_width(win, max_width + textoff + 1)
+            end
+        end, 50)
+    end
+
+    vim.api.nvim_create_autocmd('BufEnter', {
         buffer = bufnr,
-        callback = function()
-            vim.cmd [[NvimTreeRefresh]]
-        end
+        callback = callback,
+    })
+    vim.api.nvim_create_autocmd('BufLeave', {
+        buffer = bufnr,
+        callback = callback,
     })
 
     vim.keymap.set("n", "<CR>", api.node.open.edit, opts("Open selection"))
