@@ -1,5 +1,9 @@
 return {
     {
+        "nwindows",
+        dir = vim.fn.stdpath("config") .. "/plugins/nwindows",
+    },
+    {
         "iamcco/markdown-preview.nvim",
         cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
         ft = { "markdown" },
