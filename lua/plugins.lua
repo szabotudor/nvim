@@ -62,14 +62,8 @@ return {
         build = ":TSUpdate",
 
         opts = {
-            indent = { enable = true },
             ensure_installed = { "lua", "rust", "python", "cpp", "markdown", "html" },
-            highlight = { enable = true },
         },
-
-        config = function(_, opts)
-            require("nvim-treesitter.configs").setup(opts)
-        end
     },
 
     {
@@ -234,7 +228,7 @@ return {
 
     {
         "nvim-telescope/telescope.nvim",
-        tag = "0.1.8",
+        tag = "v0.2.1",
 
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
