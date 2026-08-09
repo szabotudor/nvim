@@ -324,6 +324,19 @@ vim.keymap.set("n", "(", "<C-o>", { noremap = true })
 
 -- LSP
 
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(args)
+    local bufnr = args.buf
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if client and client.server_capabilities.inlayHintProvider then
+      vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+      vim.schedule(function()
+          vim.cmd('redraw!')
+      end)
+    end
+  end,
+})
+
 local diagnostic_window = nil
 local related_diagnostic_window = nil
 local related_diagnostic_uri = nil
