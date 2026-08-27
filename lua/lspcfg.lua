@@ -60,6 +60,7 @@ end
 
 addlsp("lua_ls", "lua", true)
 addlsp("rust_analyzer", "rust", true)
+addlsp("nixd", "nix", false)
 addlsp("clangd", "c")
 addlsp("bashls", "bash", false)
 addlsp("pyright", "python")
